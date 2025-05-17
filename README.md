@@ -1,135 +1,143 @@
+
+
 # supplements-open-data
 
-> **Supplements Hub** – an open‑science effort to record *every* evidence–backed fact about dietary supplements in a fully auditable, machine‑readable format.
+> **Supplements Hub Open Data** – a public, peer‑reviewed catalogue of evidence about dietary supplements.  
+> Every fact lives in a small, human‑readable text file backed by at least one peer‑reviewed paper.
 
 ---
 
-## 📖 What lives here
-
-This repo is the **canonical dataset** for [supplementshub.io](https://supplementshub.io).  
-Everything you read on the public site is built from these text files – no hidden database, no opaque edits.
-
-*   **Open:** data licensed CC‑BY‑4.0, forkable and script‑friendly.  
-*   **Traceable:** each claim is its own commit; every edit carries an author, timestamp, and DOI link.  
-*   **Structured:** strict JSON Schemas let machines validate and re‑mix the data.
+## 🚀 Why this repo exists
+* **Transparency** – you can trace any statement on supplementshub.io back to a commit, author and DOI.  
+* **Interoperability** – strict JSON Schemas allow effortless reuse in R, Python, or Excel.  
+* **Community science** – anyone may contribute through a simple web form **or** a traditional pull‑request.
 
 ---
 
-## 📂 Folder map
+## 📂 Folder layout
 
 ```
 supplements-open-data/
 ├─ supplements/            # one folder = one supplement
 │   └─ creatine/
-│      ├─ meta.yml         # rigid identity fields
-│      ├─ intro.mdx        # long‑form overview w/ footnotes
-│      └─ images/
-├─ claims/                 # append‑only evidence cards
+│      ├─ meta.yml         # basic identity & goals
+│      └─ intro.mdx        # long‑form overview
+├─ claims/                 # “evidence cards”, append‑only
 │   └─ creatine/
 │        ├─ 2022_kreider_strength.yml
-│        └─ 1999_smith_dizziness.yml
-├─ vocab/                  # controlled lists – categories, effects, timings…
-│   ├─ categories.yml
-│   └─ side-effects.yml
-├─ papers/                 # auto‑fetched CSL‑JSON per DOI
-│   └─ 10.1519_JSC.0b013e31825bb4f3.json
-├─ schemas/                # JSON Schemas used in CI
-│   ├─ meta.schema.json
-│   ├─ claim.schema.json
-│   └─ vocab.schema.json
-└─ .github/
-    ├─ PULL_REQUEST_TEMPLATE.md
-    └─ workflows/
-        └─ validate.yml
+│        ├─ 2023_li_dizziness.yml
+│        └─ 2024_smith_preworkout_dose.yml
+├─ vocab/                  # controlled lists (categories, effects…)
+├─ papers/                 # auto‑fetched CSL‑JSON blobs per DOI
+├─ schemas/                # JSON Schemas (meta, claim, vocab)
+└─ .github/                # CI & templates
 ```
 
 ---
 
-## 🗃️ Core file formats
+## 🗂️ Supplement metadata — `meta.yml`
 
-### 1. `meta.yml`
+| key                     | type        | required | example |
+|-------------------------|------------|----------|---------|
+| `slug`                  | string      | ✔︎ | `creatine` |
+| `name`                  | string      | ✔︎ | `Creatine Monohydrate` |
+| `synonyms`              | string[]    | – | `[creatine, creapure]` |
+| `health_goals`          | slug[]      | – | `[power, cognition]` |
+| `default_dosage.amount` | number\|string | – | `3‑5` |
+| `default_dosage.unit`   | slug        | – | `g` |
+| `default_dosage.timing` | slug        | – | `any` |
+| `created`               | date        | auto | |
 
-| key            | type        | required | example                                    |
-|----------------|------------|----------|--------------------------------------------|
-| `slug`         | string      | ✔︎       | `creatine`                                 |
-| `name`         | string      | ✔︎       | `Creatine Monohydrate`                     |
-| `synonyms`     | string[]    | –       | `[creatine, creapure]`                     |
-| `categories`   | slug[]      | –       | `[power, cognition]`                       |
-| `default_dosage.amount` | number or string | – | `3–5` |
-| `default_dosage.unit`   | slug        | – | `g`                                        |
-| `default_dosage.timing` | slug        | – | `any`                                      |
-| `cycle`        | boolean     | –       | `false`                                    |
+*Everything else (effects, alternate dosages, warnings, timings …) lives in **claims** so we always know “what paper says what”.*
 
-### 2. `claims/*.yml`
+---
+
+## 📝 Claim files — the heart of the repo
+
+> **One file = one supplement × one statement × one paper**
 
 ```yaml
-field: effect            # effect | dosage | sideEffect | timing | biomarker
-kind: benefit | adverse | biomarker
-value: ↑ bench‑press 1 RM
-direction: positive      # omit when kind = adverse
-paper: 10.1080/09637486.2022.2031537
-confidence: 4           # meta=5, RCT=4, cohort=3…
-contributor: "alice@lab.edu"
-created: 2024‑05‑15
+# claims/creatine/2024_kreider_power.yml
+field: effect                # effect | dosage | timing | cycle | interaction
+kind: benefit                # benefit | adverse | biomarker   (only for field: effect)
+value: ↑ bench‑press 1‑RM
+direction: positive          # required for biomarker / benefit
+context:                     # optional extra detail
+  population: "trained males"
+  use_case:  "short‑term power"
+paper:
+  doi: 10.1080/09637486.2024.2031537
+  citation: |
+    Kreider RB et al. *J Int Soc Sports Nutr.* 2024;21(2):123‑130.
+confidence: 4                # see table below
+created: 2024‑05‑17
+contributor: alice@lab.edu
 ```
 
-One file = **one supplement × one attribute × one paper**.  
-Never edit in place – add a new file if a new study appears.
+### Field cheat‑sheet
 
-Schemas live in `schemas/` and are enforced by CI.
+| `field`        | purpose | required keys in `value` |
+|----------------|---------|--------------------------|
+| `effect`       | Any physiological outcome. Use `kind` to tag positive benefit, adverse effect, or neutral biomarker. | free string or slug |
+| `dosage`       | A numeric amount, unit, and optional schedule & use‑case. Supports *multiple* (sometimes conflicting) doses for different goals. | `amount`, `unit` *(slug)*, `schedule` |
+| `timing`       | Best time to ingest; must reference slug in `vocab/timings.yml`. | slug |
+| `cycle`        | Advice on continuous vs on/off cycling. | boolean or schedule description |
+| `interaction`  | Precautionary warning: interaction with drug/supplement/condition. | `target` (slug), `description` |
 
----
+### Confidence scale  `1 – 5`
 
-## ➡️ How to contribute
+| score | evidence type (highest quality first) |
+|-------|---------------------------------------|
+| **5** | Meta‑analysis or systematic review |
+| **4** | Randomised controlled trial (RCT) |
+| **3** | Prospective cohort / case–control |
+| **2** | In‑vivo animal or small pilot human |
+| **1** | In‑vitro / *in silico* / mechanistic |
 
-### 1. Via the web form (no Git skills)
+CI verifies the paper’s CrossRef `type` and rejects inflated scores.
 
-1. Visit the supplement page and click **“Add evidence”**.  
-2. Fill in the guided form (autocomplete for effects / side‑effects).  
-3. Pass the CAPTCHA and submit.  
-4. Our bot opens a pull request on your behalf; you’ll get a link for follow‑up.
+### Why no “side‑effect” field?
 
-### 2. Manually with a pull request
+*Everything is an* **effect**, we merely label intent:
 
-If you prefer raw Git or need batch edits:
+* `kind: benefit` – desirable outcome (↑ power, ↓ anxiety).  
+* `kind: adverse` – undesirable (dizziness, GI upset).  
+* `kind: biomarker` – neutral metric (↑ HDL, ↓ cortisol) whose desirability depends on context.  
 
-1. Fork → create a branch.  
-2. Add your claim file under `claims/<slug>/YYYY_author_key.yml`.  
-3. If you introduce a brand‑new category/effect, append it to the relevant `vocab/*.yml`.  
-4. Run `npm run validate` locally *(optional)*.  
-5. Open a PR.  
-   The template reminds you of required fields and licence checkbox.
-
-### CI gate (applies to *every* PR)
-
-* **Schema check** – AJV must pass.  
-* **DOI resolve** – CrossRef 4xx fails.  
-* **Text similarity** – MiniLM embedding vs paper abstract must score ≥ 0.15.  
-* **Citations build** – Manubot renders footnotes without error.
-
-Green checks = a maintainer reviews and merges.
+Only `benefit` & `biomarker` need a `direction`.
 
 ---
 
-## 🔍 Search & downstream use
+## ✅ Contribution paths
 
-* The public site mirrors this repo into Postgres nightly, generates a `tsvector`
-  for fast full‑text search, and publishes JSON at `/api/supplements/{slug}`.  
-* Feel free to scrape, clone, or periodically pull – just keep the CC‑BY attribution.
+### A) Web form (easiest)
+
+1. Click **“Add evidence”** on any supplement page.  
+2. Fill required fields; DOI is mandatory.  
+3. Pass CAPTCHA → bot opens PR in your name.
+
+### B) Manual pull‑request (power users)
+
+1. Fork, branch, add your `claims/<slug>/YYYY_author_key.yml`.  
+2. Use the JSON Schemas in `/schemas` (`npm run validate`).  
+3. Commit & PR – template will guide you.  
+
+**CI gates every PR identically**  
+✔ Schema passes • DOI resolves • claim ↔ abstract similarity ≥ 0.15 • citation builds.
 
 ---
 
-## 🛡️ Licence
+## 📜 Licence
 
-* **Data** – [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (free to use with attribution).  
-* **Code** – MIT in separate repos; not covered here.
+* Data (`supplements‑open‑data` repo) — **Creative Commons BY‑4.0**  
+  *Use it, cite it.*  
+* All other Supplement Hub code remains proprietary MIT in separate repos.
 
 ---
 
-## 💬 Get help / discuss
+## 💬 Need help?
 
-* Open an [Issue](https://github.com/YOUR_ORG/supplements-open-data/issues).  
-* File PR comments inline – we’re friendly.  
+* Open an Issue • ask a question • propose a schema tweak.  
 * Email: [contact@supplementshub.io](mailto:contact@supplementshub.io)
 
-*Building an evidence ecosystem together – thanks for contributing!*  
+*Thanks for keeping supplement science honest!*  
