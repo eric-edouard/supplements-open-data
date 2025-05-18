@@ -28,7 +28,7 @@ supplements-open-facts/
 │           ├─ formulations/
 │           ├─ toxicity/
 │           ├─ synergies/
-│           └─ withdrawal/
+│           └─ addiction-withdrawal/
 ├─ vocab/                      # controlled term lists
 ├─ papers/                     # CSL-JSON blobs fetched per DOI
 ├─ schemas/                    # JSON Schemas used by CI
@@ -74,7 +74,7 @@ paper: 10.1038/s41586-2024-00001
 
 ## 📚 Type‑specific keys & examples
 
-### 1 Effects `claims/<slug>/effects/*.yml`
+### Effects `claims/<slug>/effects/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -123,7 +123,7 @@ timing: pre-exercise
 
 ---
 
-### 2 Biomarkers `claims/<slug>/biomarkers/*.yml`
+### Biomarkers `claims/<slug>/biomarkers/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -153,7 +153,7 @@ timing: pre-exercise
 
 ---
 
-### 3 Cycles `cycles/`
+### Cycles `cycles/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -176,7 +176,7 @@ days_off: 30   # meaning approx. 2 months on / 1 month off
 
 ---
 
-### 4 Interactions `interactions/`
+### Interactions `interactions/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -198,7 +198,7 @@ description: May potentiate anticoagulant effect
 
 ---
 
-### 5 Formulations `formulations/`
+### Formulations `formulations/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -222,7 +222,7 @@ change_percent: 120
 
 ---
 
-### 7 Toxicity / upper‑limit `toxicity/`
+### Toxicity / upper‑limit `toxicity/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -239,7 +239,7 @@ population: adults
 
 ---
 
-### 11 Synergies `synergies/`
+### Synergies `synergies/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -254,7 +254,7 @@ strength: light
 
 ---
 
-### 13 Addiction / Withdrawal `addiction-withdrawal/`
+### Addiction / Withdrawal `addiction-withdrawal/`
 
 | key | req | notes |
 |-----|-----|-------|
