@@ -50,6 +50,7 @@ supplements-open-facts/
 | `name` | string | ✔︎ | `Creatine Monohydrate` |
 | `synonyms` | string[] | – | `[creatine, creapure]` |
 | `health_goals` | slug[] | – | `[power, cognition]` |
+| `dosage_unit` | ✔︎ | microgram / milligram / gram / millilitre / IU  |
 | `created` | date | auto | |
 
 Everything else lives in **claim files** so we always know which paper says what.
@@ -63,6 +64,7 @@ Everything else lives in **claim files** so we always know which paper says what
 | `created` | ✔︎ | date created |
 | `contributor` | ✔︎ | email / username |
 | `paper` | ✔︎ | DOI |
+
 
 Example: 
 ```yaml
@@ -88,6 +90,9 @@ paper: 10.1038/s41586-2024-00001
 | `strength` | ✔︎ | intended / adverse / neutral |
 | `p_value` | - | positive / negative / neutral |
 | `effect_size` | - | free text |
+| `dosage_min` | ✔︎ | number, must be lower than or equal to dosage_max |
+| `dosage_max` | ✔︎ | number, must be higher than or equal to dosage_min |
+| `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
 
 #### Strength scale
 
@@ -100,10 +105,12 @@ paper: 10.1038/s41586-2024-00001
 
 Example: 
 ```yaml
+# Common keys
 created: 2024-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
+# Effect keys
 effect: muscle-strength
 kind: intended
 direction: positive
@@ -111,6 +118,11 @@ description: "Increases maximal voluntary contraction force"
 strength: strong
 p_value: 0.02
 effect_size: "Cohen's d = 0.8"
+
+# Effect Dosage keys
+min: 3
+max: 5
+timing: pre-exercise
 
 ```
 
@@ -122,39 +134,31 @@ effect_size: "Cohen's d = 0.8"
 |-----|-----|-------|
 | `biomarker` | ✔︎ | slug from vocab/biomarkers.yml |
 | `direction` | ✔︎ | positive / negative / neutral |
-
+| `dosage_min` | ✔︎ | number, must be lower than or equal to dosage_max |
+| `dosage_max` | ✔︎ | number, must be higher than or equal to dosage_min |
+| `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
 
 Example: 
 ```yaml
+# Common keys
 created: 2024-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
+# Biomarker keys
 biomarker: blood-pressure
 direction: positive
+
+# Biomarker Dosage keys
+min: 3
+max: 5
+timing: pre-exercise
+
 ```
 
 ---
 
-### 3 Dosages `dosages/`
-
-| key | req | notes |
-|-----|-----|-------|
-| `unit` | ✔︎ | microgram / milligram / gram / millilitre / IU  |
-| `min` | ✔︎ | number |
-| `max` | ✔︎ | number |
-| `timing` | ✔︎ | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
-| `targeted_effects` | - | [slugs from vocab/effects.yml] |
-
-Example: 
-```yaml
-# ... common keys
-TODO
-```
-
----
-
-### 4 Cycles `cycles/`
+### 3 Cycles `cycles/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -164,7 +168,12 @@ TODO
 
 Example:
 ```yaml
-# ... common keys
+# Common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+# Cycle keys
 cycle: "suggested"
 days_on: 60
 days_off: 30   # meaning approx. 2 months on / 1 month off
@@ -172,37 +181,56 @@ days_off: 30   # meaning approx. 2 months on / 1 month off
 
 ---
 
-### 5 Interactions `interactions/`
+### 4 Interactions `interactions/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `target` | ✔︎ | interacts with |
+| `description` | ✔︎ | free text |
 
 ```yaml
+# Common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+# Interaction keys
 target: warfarin  
 description: May potentiate anticoagulant effect
 ```
 
 ---
 
-### 6 Formulations `formulations/`
+### 5 Formulations `formulations/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `formulation` | ✔︎ | interacts with |
+| `change` | cond. | negative / slightly-negative / neutral / slightly-positive / positive /  |
+| `change_percent` | cond. | change of effect strength |
+
+> Either one of change or change_percent must be defined 
 
 ```yaml
+# Common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+# Formulation keys
 formulation: liposomal
-metric: AUC
-change_percent: 110
-```
-
----
-
-### 7 Toxicity / upper‑limit `toxicity/`
-
-```yaml
-threshold_amount: 1000
-unit: mg
-effect: ↑ gastrointestinal distress
-population: adults
+change_percent: 120
 ```
 
 ---
 
 ### 8 Onset‑Duration `onset-duration/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `goal` | ✔︎ | free text |
+| `onset_minutes` | ✔︎ | number |
+| `duration_hours` | ✔︎ | number |
 
 ```yaml
 goal: endurance
@@ -212,7 +240,31 @@ duration_hours: 6
 
 ---
 
+### 7 Toxicity / upper‑limit `toxicity/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `threshold_amount` | ✔︎ | in the sam unit descrribted in <supplement>/meta.yml |
+| `change` | cond. | negative / slightly-negative / neutral / slightly-positive / positive /  |
+| `change_percent` | cond. | change of effect strength |
+
+
+```yaml
+threshold_amount: 1000
+effect: ↑ gastrointestinal distress
+population: adults
+```
+
+
+---
+
 ### 9 Population modifiers `population-modifiers/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `population` | ✔︎ | free text |
+| `modifier` | ✔︎ | enhanced | reduced |
+| `description` | ✔︎ | free text |
 
 ```yaml
 population: elderly
@@ -224,6 +276,12 @@ description: Greater VO₂‑max improvement vs young adults
 
 ### 10 Genetic interactions `genetic-interactions/`
 
+| key | req | notes |
+|-----|-----|-------|
+| `genotype` | ✔︎ | free text |
+| `direction` | ✔︎ | positive / negative / neutral |
+| `description` | ✔︎ | free text |
+
 ```yaml
 genotype: COMT Val/Val
 direction: negative
@@ -233,6 +291,13 @@ description: Blunted catechol response
 ---
 
 ### 11 Synergies `synergies/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `with_compound` | ✔︎ | free text |
+| `direction` | ✔︎ | synergy | antagonism |
+| `effect` | ✔︎ | free text |
+| `change_percent` | ✔︎ | number |
 
 ```yaml
 with_compound: citrulline
@@ -245,16 +310,61 @@ change_percent: 12
 
 ### 12 Routes `routes/`
 
+| key | req | notes |
+|-----|-----|-------|
+| `route` | ✔︎ | oral / sublingual / topical / intravenous / intramuscular / subcutaneous |
+| `bioavailability_percent` | - | percentage of bioavailability compared to reference route |
+
+Example:
 ```yaml
+# Common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+# Route keys
 route: sublingual
-metric_change: 2× faster Cmax
+bioavailability_percent: 95
 ```
 
 ---
 
-### 13 Withdrawal `withdrawal/`
+### 13 Addiction / Withdrawal `addiction-withdrawal/`
 
+| key | req | notes |
+|-----|-----|-------|
+| `symptom` | ✔︎ | free text describing the withdrawal symptom |
+| `incidence_percent` | - | percentage of users experiencing the symptom |
+
+Example:
 ```yaml
+# Common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+# Addiction / Withdrawal keys
+symptom: rebound insomnia
+incidence_percent: 20
+```
+
+---
+
+### 14 Withdrawal `withdrawal/`
+
+| key | req | notes |
+|-----|-----|-------|
+| `symptom` | ✔︎ | free text describing the withdrawal symptom |
+| `incidence_percent` | - | percentage of users experiencing the symptom |
+
+Example:
+```yaml
+# Common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+# Withdrawal keys
 symptom: rebound insomnia
 incidence_percent: 20
 ```
@@ -269,7 +379,7 @@ incidence_percent: 20
 
 1. Visit a supplement page on **supplementshub.io** → click **"Add evidence".**  
 2. Fill the form (DOI required).  
-3. Pass CAPTCHA. Our bot opens a pull‑request in this repo; follow the link.
+3. Our bot opens a pull‑request in this repo; follow the link.
 
 ### 2 Power mode – pull request
 
