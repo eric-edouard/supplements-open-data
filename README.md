@@ -1,4 +1,3 @@
-
 # supplements-open-facts
 
 > **Supplements Open Facts** – an open‑science catalogue of evidence about dietary supplements.  
@@ -6,7 +5,7 @@
 
 ---
 
-## 📖 What’s inside?
+## 📖 What's inside?
 
 * **Transparent** – Each claim is a commit with author, timestamp and paper link.  
 * **Structured** – Strict JSON Schemas keep the facts machine‑friendly.  
@@ -69,7 +68,7 @@ Example:
 ```yaml
 created: 2024-05-18
 contributor: alice@example.com
-paper: 10.1038/s41586-2024-00001 
+paper: 10.1038/s41586-2024-00001
 
 # --- type‑specific keys follow ---
 ```
@@ -97,12 +96,22 @@ paper: 10.1038/s41586-2024-00001
 | **strong**   | Primary outcome, p < 0.05, adequate N |
 | **moderate** | Significant secondary outcome or trend (0.05–0.10) |
 | **weak**     | Non‑significant directional change |
-| **none**     | Paper reports “no effect” |
+| **none**     | Paper reports "no effect" |
 
 Example: 
 ```yaml
-# ... common keys
-TODO
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
+effect: muscle-strength
+kind: intended
+direction: positive
+description: "Increases maximal voluntary contraction force"
+strength: strong
+p_value: 0.02
+effect_size: "Cohen's d = 0.8"
+
 ```
 
 ---
@@ -117,7 +126,10 @@ TODO
 
 Example: 
 ```yaml
-...common keys
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+
 biomarker: blood-pressure
 direction: positive
 ```
@@ -255,7 +267,7 @@ incidence_percent: 20
 
 ### 1 Easy mode – web form
 
-1. Visit a supplement page on **supplementshub.io** → click **“Add evidence”.**  
+1. Visit a supplement page on **supplementshub.io** → click **"Add evidence".**  
 2. Fill the form (DOI required).  
 3. Pass CAPTCHA. Our bot opens a pull‑request in this repo; follow the link.
 
