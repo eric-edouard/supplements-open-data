@@ -50,6 +50,16 @@ supplements-open-facts/
 
 Everything else lives in **claim files** so we always know which paper says what.
 
+Example:
+```yaml
+slug: l-theanine
+name: L-Theanine
+synonyms: [theanine, suntheanine]
+health_goals: [relaxation, focus]
+dosage_unit: milligram
+created: 2024-01-15
+```
+
 ---
 
 ## 📑 Claim files – common keys
@@ -74,7 +84,7 @@ paper: 10.1038/s41586-2024-00001
 
 ## 📚 Type‑specific keys & examples
 
-### 1. Effects `supplements/<slug>/claims/effects/*.yml`
+### Effects `supplements/<slug>/claims/effects/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -123,7 +133,7 @@ timing: pre-exercise
 
 ---
 
-### 2. Biomarkers `claims/<slug>/biomarkers/*.yml`
+### Biomarkers `supplements/<slug>/claims/biomarkers/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -153,7 +163,7 @@ timing: pre-exercise
 
 ---
 
-### 3. Cycles `cycles/`
+### Cycles `supplements/<slug>/claims/cycles/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -176,7 +186,7 @@ days_off: 30   # meaning approx. 2 months on / 1 month off
 
 ---
 
-### 4. Interactions  `claims/<slug>/interactions/*.yml`
+### Interactions  `supplements/<slug>/claims/interactions/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -198,7 +208,7 @@ description: May potentiate anticoagulant effect
 
 ---
 
-### 5. Formulations `claims/<slug>/formulations/*.yml`
+### Formulations `supplements/<slug>/claims/formulations/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -222,7 +232,7 @@ change_percent: 120
 
 ---
 
-### 6. Toxicity / upper‑limit `toxicity/`
+### Toxicity / upper‑limit `supplements/<slug>/claims/toxicity/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -239,7 +249,7 @@ population: adults
 
 ---
 
-### 7. Synergies `synergies/`
+### Synergies `supplements/<slug>/claims/synergies/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -256,7 +266,7 @@ strength: light
 
 ---
 
-### 8. Addiction / Withdrawal `withdrawal/`
+### Addiction / Withdrawal `supplements/<slug>/claims/addiction-withdrawal/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
