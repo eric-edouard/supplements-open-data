@@ -19,7 +19,7 @@
 supplements-open-facts/
 ├─ supplements/
 │   └─ <slug>/                  # one folder per supplement
-│       ├─ meta.yml             # metadatada
+│       ├─ meta.yml             # metadata
 │       └─ claims/
 │           ├─ effects/
 │           ├─ biomarkers/
@@ -45,7 +45,7 @@ supplements-open-facts/
 | `name` | string | ✔︎ | `Creatine Monohydrate` |
 | `synonyms` | string[] | – | `[creatine, creapure]` |
 | `health_goals` | slug[] | – | `[power, cognition]` |
-| `dosage_unit` | ✔︎ | microgram / milligram / gram / millilitre / IU  |
+| `dosage_unit` | ✔︎ | microgram / milligram / gram / millilitre / IU  | `gram` |
 | `created` | date | auto | |
 
 Everything else lives in **claim files** so we always know which paper says what.
@@ -74,15 +74,15 @@ paper: 10.1038/s41586-2024-00001
 
 ## 📚 Type‑specific keys & examples
 
-### Effects `claims/<slug>/effects/*.yml`
+### 1. Effects `supplements/<slug>/claims/effects/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
 | `effect` | ✔︎ | slug from vocab/effects.yml |
 | `kind` | ✔︎ | intended / adverse / neutral |
 | `direction` | ✔︎ | positive / negative / neutral |
-| `description` | ✔︎ | strong / moderate / weak / none (refer to the Strength Scale below) |
-| `strength` | ✔︎ | intended / adverse / neutral |
+| `description` | - | Free text describing the effect observed. |
+| `strength` | ✔︎ | strong / moderate / weak / none (see Strength scale) |
 | `p_value` | - | positive / negative / neutral |
 | `effect_size` | - | free text |
 | `dosage_min` | ✔︎ | number, must be lower than or equal to dosage_max |
@@ -115,15 +115,15 @@ p_value: 0.02
 effect_size: "Cohen's d = 0.8"
 
 # Effect Dosage keys
-min: 3
-max: 5
+dosage_min: 3
+dosage_max: 5
 timing: pre-exercise
 
 ```
 
 ---
 
-### Biomarkers `claims/<slug>/biomarkers/*.yml`
+### 2. Biomarkers `claims/<slug>/biomarkers/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -153,7 +153,7 @@ timing: pre-exercise
 
 ---
 
-### Cycles `cycles/`
+### 3. Cycles `cycles/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -169,14 +169,14 @@ contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
 # Cycle keys
-cycle: "suggested"
+cycle: suggested
 days_on: 60
 days_off: 30   # meaning approx. 2 months on / 1 month off
 ```
 
 ---
 
-### Interactions `interactions/`
+### 4. Interactions  `claims/<slug>/interactions/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -198,7 +198,7 @@ description: May potentiate anticoagulant effect
 
 ---
 
-### Formulations `formulations/`
+### 5. Formulations `claims/<slug>/formulations/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -222,7 +222,7 @@ change_percent: 120
 
 ---
 
-### Toxicity / upper‑limit `toxicity/`
+### 6. Toxicity / upper‑limit `toxicity/`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -239,13 +239,15 @@ population: adults
 
 ---
 
-### Synergies `synergies/`
+### 7. Synergies `synergies/`
 
 | key | req | notes |
 |-----|-----|-------|
 | `with_compound` | ✔︎ | with other supplement or free text |
 | `strength` | cond | light / medium / strong |
 | `change_percent` | cond | number |
+
+> At least one of `strength` or `change_percent` must be defined
 
 ```yaml
 with_compound: citrulline
@@ -254,7 +256,7 @@ strength: light
 
 ---
 
-### Addiction / Withdrawal `addiction-withdrawal/`
+### 8. Addiction / Withdrawal `withdrawal/`
 
 | key | req | notes |
 |-----|-----|-------|
