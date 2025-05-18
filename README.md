@@ -22,17 +22,12 @@ supplements-open-facts/
 │       ├─ meta.yml             # metadatada
 │       └─ claims/
 │           ├─ effects/
-│           ├─ dosages/
-│           ├─ timings/
+│           ├─ biomarkers/
 │           ├─ cycles/
 │           ├─ interactions/
 │           ├─ formulations/
 │           ├─ toxicity/
-│           ├─ onset-duration/
-│           ├─ population-modifiers/
-│           ├─ genetic-interactions/
 │           ├─ synergies/
-│           ├─ routes/
 │           └─ withdrawal/
 ├─ vocab/                      # controlled term lists
 ├─ papers/                     # CSL-JSON blobs fetched per DOI
@@ -128,7 +123,7 @@ timing: pre-exercise
 
 ---
 
-### 2 Biomarkers`claims/<slug>/biomarkers/*.yml`
+### 2 Biomarkers `claims/<slug>/biomarkers/*.yml`
 
 | key | req | notes |
 |-----|-----|-------|
@@ -185,8 +180,9 @@ days_off: 30   # meaning approx. 2 months on / 1 month off
 
 | key | req | notes |
 |-----|-----|-------|
-| `target` | ✔︎ | interacts with |
-| `description` | ✔︎ | free text |
+| `target` | ✔︎ | compound it interacts with |
+| `danger_level` | ✔︎ | mild / severe |
+| `description` | - | free text |
 
 ```yaml
 # Common keys
@@ -195,7 +191,8 @@ contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
 # Interaction keys
-target: warfarin  
+target: warfarin
+danger_level: mild
 description: May potentiate anticoagulant effect
 ```
 
@@ -222,21 +219,6 @@ formulation: liposomal
 change_percent: 120
 ```
 
----
-
-### 8 Onset‑Duration `onset-duration/`
-
-| key | req | notes |
-|-----|-----|-------|
-| `goal` | ✔︎ | free text |
-| `onset_minutes` | ✔︎ | number |
-| `duration_hours` | ✔︎ | number |
-
-```yaml
-goal: endurance
-onset_minutes: 90
-duration_hours: 6
-```
 
 ---
 
@@ -255,76 +237,19 @@ effect: ↑ gastrointestinal distress
 population: adults
 ```
 
-
----
-
-### 9 Population modifiers `population-modifiers/`
-
-| key | req | notes |
-|-----|-----|-------|
-| `population` | ✔︎ | free text |
-| `modifier` | ✔︎ | enhanced | reduced |
-| `description` | ✔︎ | free text |
-
-```yaml
-population: elderly
-modifier: enhanced              # enhanced | reduced
-description: Greater VO₂‑max improvement vs young adults
-```
-
----
-
-### 10 Genetic interactions `genetic-interactions/`
-
-| key | req | notes |
-|-----|-----|-------|
-| `genotype` | ✔︎ | free text |
-| `direction` | ✔︎ | positive / negative / neutral |
-| `description` | ✔︎ | free text |
-
-```yaml
-genotype: COMT Val/Val
-direction: negative
-description: Blunted catechol response
-```
-
 ---
 
 ### 11 Synergies `synergies/`
 
 | key | req | notes |
 |-----|-----|-------|
-| `with_compound` | ✔︎ | free text |
-| `direction` | ✔︎ | synergy | antagonism |
-| `effect` | ✔︎ | free text |
-| `change_percent` | ✔︎ | number |
+| `with_compound` | ✔︎ | with other supplement or free text |
+| `strength` | cond | light / medium / strong |
+| `change_percent` | cond | number |
 
 ```yaml
 with_compound: citrulline
-direction: synergy              # synergy | antagonism
-effect: ↑ peak power
-change_percent: 12
-```
-
----
-
-### 12 Routes `routes/`
-
-| key | req | notes |
-|-----|-----|-------|
-| `route` | ✔︎ | oral / sublingual / topical / intravenous / intramuscular / subcutaneous |
-| `bioavailability_percent` | - | percentage of bioavailability compared to reference route |
-
-Example:
-```yaml
-# Common keys
-created: 2024-05-18
-contributor: alice@example.com
-paper: 10.1038/s41586-2024-00001
-
-# Route keys
-route: sublingual
-bioavailability_percent: 95
+strength: light
 ```
 
 ---
@@ -347,29 +272,6 @@ paper: 10.1038/s41586-2024-00001
 symptom: rebound insomnia
 incidence_percent: 20
 ```
-
----
-
-### 14 Withdrawal `withdrawal/`
-
-| key | req | notes |
-|-----|-----|-------|
-| `symptom` | ✔︎ | free text describing the withdrawal symptom |
-| `incidence_percent` | - | percentage of users experiencing the symptom |
-
-Example:
-```yaml
-# Common keys
-created: 2024-05-18
-contributor: alice@example.com
-paper: 10.1038/s41586-2024-00001
-
-# Withdrawal keys
-symptom: rebound insomnia
-incidence_percent: 20
-```
-
-*(Less common claim‑types are collapsed for brevity – see `/schemas` for full spec.)*
 
 ---
 
