@@ -54,7 +54,7 @@ Example:
 ```yaml
 slug: l-theanine
 name: L-Theanine
-synonyms: [theanine, suntheanine]
+synonyms: [theanine, suntheanine, liposomal theanine]
 health_goals: [relaxation, focus]
 dosage_unit: milligram
 created: 2024-01-15
@@ -69,6 +69,7 @@ created: 2024-01-15
 | `created` | ✔︎ | date created |
 | `contributor` | ✔︎ | email / username |
 | `paper` | ✔︎ | DOI |
+| `misc` | - | free text |
 
 
 Example: 
@@ -76,6 +77,7 @@ Example:
 created: 2024-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
+
 
 # --- type‑specific keys follow ---
 ```
@@ -139,6 +141,7 @@ timing: pre-exercise
 |-----|-----|-------|
 | `biomarker` | ✔︎ | slug from vocab/biomarkers.yml |
 | `direction` | ✔︎ | positive / negative / neutral |
+| `strength` | - | If applicable: strong / moderate / weak / none (see Strength scale) |
 | `dosage_min` | ✔︎ | number, must be lower than or equal to dosage_max |
 | `dosage_max` | ✔︎ | number, must be higher than or equal to dosage_min |
 | `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
@@ -168,8 +171,9 @@ timing: pre-exercise
 | key | req | notes |
 |-----|-----|-------|
 | `cycle` | ✔︎ | none / suggested / recommended |
-| `days_on` | cond. | number (if suggested or recommended) |
-| `days_off` | cond. | number (if suggested or recommended) |
+| `days_on_off` | cond. | number-number (if suggested or recommended) |
+| `weeks_on_off` | cond. | number-number (if suggested or recommended) |
+| `months_on_off` | cond. | number-number (if suggested or recommended) |
 
 Example:
 ```yaml
@@ -180,8 +184,7 @@ paper: 10.1038/s41586-2024-00001
 
 # Cycle keys
 cycle: suggested
-days_on: 60
-days_off: 30   # meaning approx. 2 months on / 1 month off
+days_on_off: 5-2 # weekdays, stop of week-ends
 ```
 
 ---
@@ -191,7 +194,7 @@ days_off: 30   # meaning approx. 2 months on / 1 month off
 | key | req | notes |
 |-----|-----|-------|
 | `target` | ✔︎ | compound it interacts with |
-| `danger_level` | ✔︎ | mild / severe |
+| `danger_level` | ✔︎ | low / mild / severe |
 | `description` | - | free text |
 
 ```yaml
@@ -254,7 +257,7 @@ population: adults
 | key | req | notes |
 |-----|-----|-------|
 | `with_compound` | ✔︎ | with other supplement or free text |
-| `strength` | cond | light / medium / strong |
+| `strength` | cond | light / mild / strong |
 | `change_percent` | cond | number |
 
 > At least one of `strength` or `change_percent` must be defined
