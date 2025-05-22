@@ -30,7 +30,6 @@ supplements-open-facts/
 │           ├─ synergies/
 │           └─ addiction-withdrawal/
 ├─ vocab/                      # controlled term lists
-├─ papers/                     # CSL-JSON blobs fetched per DOI
 ├─ schemas/                    # JSON Schemas used by CI
 └─ .github/                    # CI workflows & templates
 ```
