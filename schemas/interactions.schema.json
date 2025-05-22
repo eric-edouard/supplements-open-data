@@ -1,0 +1,13 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"required": ["created", "contributor", "paper", "target", "danger_level"],
+	"properties": {
+		"created": { "type": "string" },
+		"contributor": { "type": "string" },
+		"paper": { "type": "string" },
+		"target": { "type": "string" },
+		"danger_level": { "enum": ["low", "mild", "severe"] },
+		"description": { "type": "string" }
+	}
+}

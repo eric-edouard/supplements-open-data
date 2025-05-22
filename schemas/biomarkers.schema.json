@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"required": [
+		"created",
+		"contributor",
+		"paper",
+		"biomarker",
+		"direction",
+		"dosage_min",
+		"dosage_max"
+	],
+	"properties": {
+		"created": { "type": "string" },
+		"contributor": { "type": "string" },
+		"paper": { "type": "string" },
+		"biomarker": { "type": "string" },
+		"direction": { "enum": ["positive", "negative", "neutral"] },
+		"strength": { "enum": ["strong", "moderate", "weak", "none"] },
+		"dosage_min": { "type": "number" },
+		"dosage_max": { "type": "number" },
+		"timing": { "type": "string" }
+	}
+}

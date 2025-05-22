@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"required": ["created", "contributor", "paper", "symptom"],
+	"properties": {
+		"created": { "type": "string" },
+		"contributor": { "type": "string" },
+		"paper": { "type": "string" },
+		"symptom": { "type": "string" },
+		"incidence_percent": { "type": "number" }
+	}
+}
