@@ -43,7 +43,6 @@ supplements-open-facts/
 | `slug` | string | ✔︎ | `creatine` |
 | `name` | string | ✔︎ | `Creatine Monohydrate` |
 | `synonyms` | string[] | – | `[creatine, creapure]` |
-| `health_goals` | slug[] | – | `[power, cognition]` |
 | `dosage_unit` | ✔︎ | microgram / milligram / gram / millilitre / IU  | `gram` |
 | `created` | date | auto | |
 
@@ -54,7 +53,6 @@ Example:
 slug: l-theanine
 name: L-Theanine
 synonyms: [theanine, suntheanine, liposomal theanine]
-health_goals: [relaxation, focus]
 dosage_unit: milligram
 created: 2024-01-15
 ```
