@@ -1,0 +1,12 @@
+{
+  "name": "supplements-open-facts",
+  "version": "1.0.0",
+  "description": "> **Supplements Open Facts** – an open‑science catalogue of evidence about dietary supplements.   > Every fact is traceable to a DOI and stored in plain text so humans *and* machines can audit it.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
