@@ -30,6 +30,8 @@ supplements-open-facts/
 │           ├─ synergies/
 │           └─ addiction-withdrawal/
 ├─ vocab/                      # controlled term lists
+│   ├─ effects.yml             # list of effects slugs
+│   └─ biomarkers/yml          # list of biomakers slugs
 ├─ schemas/                    # JSON Schemas used by CI
 └─ .github/                    # CI workflows & templates
 ```
