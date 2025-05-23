@@ -6,6 +6,26 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import YAML from "yaml";
 
+function safeTryCatch<T>(fn: () => T): [Error | null, T | null] {
+	try {
+		const result = fn();
+		return [null, result];
+	} catch (error) {
+		return [error as Error, null];
+	}
+}
+
+async function safeTryCatchAsync<T>(
+	fn: () => Promise<T>,
+): Promise<[Error | null, T | null]> {
+	try {
+		const result = await fn();
+		return [null, result];
+	} catch (error) {
+		return [error as Error, null];
+	}
+}
+
 const SCHEMA_DIR = path.join(process.cwd(), "schemas");
 const SUPP_DIR = path.join(process.cwd(), "supplements");
 
@@ -27,43 +47,51 @@ async function validateYAML(
 	validateFn: ValidateFunction,
 	validateDOI = false,
 ): Promise<ValidationError | null> {
-	try {
-		const raw = await fs.readFile(filePath, "utf-8");
-		const data = YAML.parse(raw);
-
-		const valid = validateFn(data);
-		if (!valid && validateFn.errors) {
-			const errors = validateFn.errors.map((err) => ({
-				message: err.message ?? "Unknown schema error",
-			}));
-			return { filePath, errors };
-		}
-
-		if (validateDOI && typeof data === "object" && data && "paper" in data) {
-			try {
-				const doiUrl = `https://doi.org/${(data as { paper: string }).paper}`;
-				const res = await axios.head(doiUrl);
-				if (res.status >= 400) {
-					return {
-						filePath,
-						errors: [{ message: `DOI unreachable (${res.status})` }],
-					};
-				}
-			} catch {
-				return {
-					filePath,
-					errors: [{ message: "DOI unreachable" }],
-				};
-			}
-		}
-
-		return null;
-	} catch (err: unknown) {
+	const [readError, raw] = await safeTryCatchAsync(() =>
+		fs.readFile(filePath, "utf-8"),
+	);
+	if (readError) {
 		return {
 			filePath,
-			errors: [{ message: `Parse error: ${(err as Error).message}` }],
+			errors: [{ message: `Read error: ${readError.message}` }],
 		};
 	}
+
+	if (!raw) {
+		return {
+			filePath,
+			errors: [{ message: "File is empty" }],
+		};
+	}
+
+	const [parseError, data] = safeTryCatch(() => YAML.parse(raw));
+	if (parseError) {
+		return {
+			filePath,
+			errors: [{ message: `Parse error: ${parseError.message}` }],
+		};
+	}
+
+	const valid = validateFn(data);
+	if (!valid && validateFn.errors) {
+		const errors = validateFn.errors.map((err) => ({
+			message: err.message ?? "Unknown schema error",
+		}));
+		return { filePath, errors };
+	}
+
+	if (validateDOI && typeof data === "object" && data && "paper" in data) {
+		const doiUrl = `https://doi.org/${(data as { paper: string }).paper}`;
+		const [doiError, res] = await safeTryCatchAsync(() => axios.head(doiUrl));
+		if (doiError || (res && res.status >= 400)) {
+			return {
+				filePath,
+				errors: [{ message: "DOI unreachable" }],
+			};
+		}
+	}
+
+	return null;
 }
 async function runValidation() {
 	const failures: ValidationError[] = [];
