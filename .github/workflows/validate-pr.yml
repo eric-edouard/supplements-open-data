@@ -1,0 +1,142 @@
+name: Validate Pull Request
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        id: test
+        run: |
+          echo "Running tests..."
+          if npm test 2>&1 | tee test_output.txt; then
+            echo "test_status=success" >> $GITHUB_OUTPUT
+            echo "test_message=✅ All tests passed." >> $GITHUB_OUTPUT
+          else
+            echo "test_status=failure" >> $GITHUB_OUTPUT
+            # Capture the error output and format it for GitHub
+            error_message=$(cat test_output.txt | sed 's/$/\\n/' | tr -d '\n')
+            echo "test_message=$error_message" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run validation
+        id: validate
+        if: steps.test.outputs.test_status == 'success'
+        run: |
+          echo "Running validation..."
+          if npm run validate 2>&1 | tee validation_output.txt; then
+            echo "validation_status=success" >> $GITHUB_OUTPUT
+            echo "validation_message=✅ All files are valid." >> $GITHUB_OUTPUT
+          else
+            echo "validation_status=failure" >> $GITHUB_OUTPUT
+            # Capture the error output and format it for GitHub
+            error_message=$(cat validation_output.txt | sed 's/$/\\n/' | tr -d '\n')
+            echo "validation_message=$error_message" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR - Test Failure
+        if: steps.test.outputs.test_status == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const testOutput = `${{ steps.test.outputs.test_message }}`;
+            const body = `## ❌ Tests Failed\n\nThe validation function tests failed. Please fix these issues before proceeding:\n\n\`\`\`\n${testOutput}\n\`\`\``;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+
+      - name: Comment on PR - Success
+        if: steps.test.outputs.test_status == 'success' && steps.validate.outputs.validation_status == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## ✅ Validation Successful\n\nAll tests passed and supplement data files have been validated successfully against the schemas.'
+            })
+
+      - name: Comment on PR - Validation Failure
+        if: steps.test.outputs.test_status == 'success' && steps.validate.outputs.validation_status == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const validationOutput = `${{ steps.validate.outputs.validation_message }}`;
+            const body = `## ❌ Validation Failed\n\nTests passed, but the following validation errors were found:\n\n\`\`\`\n${validationOutput}\n\`\`\`\n\nPlease fix these issues before merging.`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+
+      - name: Set check status
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const testStatus = '${{ steps.test.outputs.test_status }}';
+            const validationStatus = '${{ steps.validate.outputs.validation_status }}';
+
+            let conclusion, title, summary;
+
+            if (testStatus === 'failure') {
+              conclusion = 'failure';
+              title = 'Tests failed';
+              summary = 'Validation function tests failed';
+            } else if (validationStatus === 'failure') {
+              conclusion = 'failure';
+              title = 'Validation failed';
+              summary = 'Some supplement data files failed validation';
+            } else if (testStatus === 'success' && validationStatus === 'success') {
+              conclusion = 'success';
+              title = 'Tests and validation passed';
+              summary = 'All tests passed and supplement data files are valid';
+            } else {
+              conclusion = 'failure';
+              title = 'Incomplete validation';
+              summary = 'Validation process was incomplete';
+            }
+
+            github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Supplement Data Validation',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'completed',
+              conclusion: conclusion,
+              output: {
+                title: title,
+                summary: summary
+              }
+            })
+
+      - name: Fail job if tests or validation failed
+        if: steps.test.outputs.test_status == 'failure' || steps.validate.outputs.validation_status == 'failure'
+        run: exit 1
