@@ -8,9 +8,7 @@
 		"effect",
 		"kind",
 		"direction",
-		"strength",
-		"dosage_min",
-		"dosage_max"
+		"strength"
 	],
 	"properties": {
 		"created": { "type": "string" },

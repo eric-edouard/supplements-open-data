@@ -6,9 +6,7 @@
 		"contributor",
 		"paper",
 		"biomarker",
-		"direction",
-		"dosage_min",
-		"dosage_max"
+		"direction"
 	],
 	"properties": {
 		"created": { "type": "string" },
