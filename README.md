@@ -61,12 +61,76 @@ created: 2024-01-15
 
 ---
 
-## 📑 Claim files – common keys
+## 📑 Claim files
+
+### File Naming Convention
+
+To keep the dataset clean, sortable, and audit-friendly, every claim file follows this naming convention:
+
+<publication-date>-<claim-subject>.yml
+
+🔹 Format
+	•	<publication-date>: Use the paper’s publication date, not the contribution date.
+	•	Use full date when available: YYYY-MM-DD
+	•	If day is unknown: YYYY-MM
+	•	If only year is known: YYYY
+	•	<claim-subject>: Use the main effect, biomarker, or claim type as a short, kebab-case identifier.
+	•	For effects → muscle-strength, sleep-quality, etc.
+	•	For biomarkers → cortisol, blood-glucose, etc.
+	•	For interactions, synergies, toxicity, etc. → use the most descriptive keyword (e.g., warfarin, liposomal, gi-distress).
+
+🔹 Examples
+
+#### Effects
+
+```
+2023-11-12-muscle-strength.yml
+2024-04-memory-recall.yml
+2022-lifespan-extension.yml
+```
+
+#### Biomarkers
+
+```
+2024-01-15-blood-glucose.yml
+2021-cortisol.yml
+```
+
+#### Interactions
+```
+2023-06-warfarin.yml
+```
+#### Formulations
+```
+2024-02-liposomal.yml
+```
+#### Toxicity
+```
+2022-10-gi-distress.yml
+```
+#### Cycles
+```
+2024-03-5-2-cycle.yml
+```
+
+#### 🧾 Why this format?
+
+	•	Chronological sorting: Files auto-group by publication date for timeline views.
+	•	Paper grouping: Claims from the same study appear together in file listings.
+	•	Filesystem-safe: No slashes, dots, or raw DOIs.
+	•	Human-readable: Easy to understand what each file contains at a glance.
+
+⚠️ If multiple claims share the same publication date and subject, suffix with -2, -3, etc.
+
+2024-01-15-blood-glucose.yml
+2024-01-15-blood-glucose-2.yml
+
+## Claim File Content - Common keys
 
 | key | req | notes |
 |-----|-----|-------|
 | `created` | ✔︎ | date created |
-| `contributor` | ✔︎ | email / username |
+| `contributor` | ✔︎ | email / github link profile |
 | `paper` | ✔︎ | DOI |
 | `misc` | - | free text |
 
@@ -96,8 +160,8 @@ paper: 10.1038/s41586-2024-00001
 | `strength` | ✔︎ | strong / moderate / weak / none (see Strength scale) |
 | `p_value` | - | positive / negative / neutral |
 | `effect_size` | - | free text |
-| `dosage_min` | ✔︎ | number, must be lower than or equal to dosage_max |
-| `dosage_max` | ✔︎ | number, must be higher than or equal to dosage_min |
+| `dosage_min` | - | number, must be lower than or equal to dosage_max |
+| `dosage_max` | - | number, must be higher than or equal to dosage_min |
 | `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
 
 #### Strength scale
@@ -141,8 +205,8 @@ timing: pre-exercise
 | `biomarker` | ✔︎ | slug from vocab/biomarkers.yml |
 | `direction` | ✔︎ | positive / negative / neutral |
 | `strength` | - | If applicable: strong / moderate / weak / none (see Strength scale) |
-| `dosage_min` | ✔︎ | number, must be lower than or equal to dosage_max |
-| `dosage_max` | ✔︎ | number, must be higher than or equal to dosage_min |
+| `dosage_min` | - | number, must be lower than or equal to dosage_max |
+| `dosage_max` | - | number, must be higher than or equal to dosage_min |
 | `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
 
 Example: 
