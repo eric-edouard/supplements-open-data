@@ -307,7 +307,6 @@ incidence_percent: 20
 * JSON Schema ✔︎  
 * DOI resolves ✔︎  
 * Text–abstract similarity ≥ 0.15 ✔︎  
-* CSL‑JSON auto‑fetched & citation compile ✔︎  
 
 Green ticks → human review → merge.
 
