@@ -28,6 +28,7 @@ async function safeTryCatchAsync<T>(
 
 const SCHEMA_DIR = path.join(process.cwd(), "schemas");
 const SUPP_DIR = path.join(process.cwd(), "supplements");
+const VOCAB_DIR = path.join(process.cwd(), "vocab");
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -38,6 +39,33 @@ async function loadSchema(name: string): Promise<object> {
 	return JSON.parse(raw);
 }
 
+async function loadVocabulary(name: string): Promise<string[]> {
+	const vocabPath = path.join(VOCAB_DIR, `${name}.yml`);
+	const [readError, raw] = await safeTryCatchAsync(() =>
+		fs.readFile(vocabPath, "utf-8"),
+	);
+	if (readError) {
+		throw new Error(`Failed to load vocabulary ${name}: ${readError.message}`);
+	}
+
+	if (!raw) {
+		throw new Error(`Vocabulary ${name} is empty`);
+	}
+
+	const [parseError, data] = safeTryCatch(() => YAML.parse(raw));
+	if (parseError) {
+		throw new Error(
+			`Failed to parse vocabulary ${name}: ${parseError.message}`,
+		);
+	}
+
+	if (!Array.isArray(data)) {
+		throw new Error(`Vocabulary ${name} must be an array of strings`);
+	}
+
+	return data as string[];
+}
+
 type ValidationError = {
 	filePath: string;
 	errors: { message: string }[];
@@ -46,6 +74,7 @@ async function validateYAML(
 	filePath: string,
 	validateFn: ValidateFunction,
 	validateDOI = false,
+	vocabularyValidation?: { field: string; vocabulary: string[] },
 ): Promise<ValidationError | null> {
 	const [readError, raw] = await safeTryCatchAsync(() =>
 		fs.readFile(filePath, "utf-8"),
@@ -80,6 +109,30 @@ async function validateYAML(
 		return { filePath, errors };
 	}
 
+	if (
+		vocabularyValidation &&
+		typeof data === "object" &&
+		data &&
+		vocabularyValidation.field in data
+	) {
+		const fieldValue = (data as Record<string, unknown>)[
+			vocabularyValidation.field
+		];
+		if (
+			typeof fieldValue === "string" &&
+			!vocabularyValidation.vocabulary.includes(fieldValue)
+		) {
+			return {
+				filePath,
+				errors: [
+					{
+						message: `Invalid ${vocabularyValidation.field}: '${fieldValue}' not found in vocabulary`,
+					},
+				],
+			};
+		}
+	}
+
 	if (validateDOI && typeof data === "object" && data && "paper" in data) {
 		const doiUrl = `https://doi.org/${(data as { paper: string }).paper}`;
 		const [doiError, res] = await safeTryCatchAsync(() => axios.head(doiUrl));
@@ -95,6 +148,10 @@ async function validateYAML(
 }
 async function runValidation() {
 	const failures: ValidationError[] = [];
+
+	// Load vocabularies
+	const effectsVocab = await loadVocabulary("effects");
+	const biomarkersVocab = await loadVocabulary("biomarkers");
 
 	// Meta files
 	const metaSchema = await loadSchema("meta");
@@ -121,8 +178,27 @@ async function runValidation() {
 		const schema = await loadSchema(type);
 		const validateFn = ajv.compile(schema);
 		const files = await glob(`${SUPP_DIR}/*/claims/${type}/*.yml`);
+
+		// Determine vocabulary validation
+		let vocabularyValidation:
+			| { field: string; vocabulary: string[] }
+			| undefined;
+		if (type === "effects") {
+			vocabularyValidation = { field: "effect", vocabulary: effectsVocab };
+		} else if (type === "biomarkers") {
+			vocabularyValidation = {
+				field: "biomarker",
+				vocabulary: biomarkersVocab,
+			};
+		}
+
 		for (const file of files) {
-			const result = await validateYAML(file, validateFn, true);
+			const result = await validateYAML(
+				file,
+				validateFn,
+				true,
+				vocabularyValidation,
+			);
 			if (result) failures.push(result);
 		}
 	}
