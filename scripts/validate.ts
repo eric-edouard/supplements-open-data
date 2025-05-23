@@ -6,7 +6,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import YAML from "yaml";
 
-function safeTryCatch<T>(fn: () => T): [Error | null, T | null] {
+export function safeTryCatch<T>(fn: () => T): [Error | null, T | null] {
 	try {
 		const result = fn();
 		return [null, result];
@@ -15,7 +15,7 @@ function safeTryCatch<T>(fn: () => T): [Error | null, T | null] {
 	}
 }
 
-async function safeTryCatchAsync<T>(
+export async function safeTryCatchAsync<T>(
 	fn: () => Promise<T>,
 ): Promise<[Error | null, T | null]> {
 	try {
@@ -33,14 +33,17 @@ const VOCAB_DIR = path.join(process.cwd(), "vocab");
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
 
-async function loadSchema(name: string): Promise<object> {
+export async function loadSchema(name: string): Promise<object> {
 	const schemaPath = path.join(SCHEMA_DIR, `${name}.schema.json`);
 	const raw = await fs.readFile(schemaPath, "utf-8");
 	return JSON.parse(raw);
 }
 
-async function loadVocabulary(name: string): Promise<string[]> {
-	const vocabPath = path.join(VOCAB_DIR, `${name}.yml`);
+export async function loadVocabulary(
+	name: string,
+	vocabDir = VOCAB_DIR,
+): Promise<string[]> {
+	const vocabPath = path.join(vocabDir, `${name}.yml`);
 	const [readError, raw] = await safeTryCatchAsync(() =>
 		fs.readFile(vocabPath, "utf-8"),
 	);
@@ -66,11 +69,12 @@ async function loadVocabulary(name: string): Promise<string[]> {
 	return data as string[];
 }
 
-type ValidationError = {
+export type ValidationError = {
 	filePath: string;
 	errors: { message: string }[];
 };
-async function validateYAML(
+
+export async function validateYAML(
 	filePath: string,
 	validateFn: ValidateFunction,
 	validateDOI = false,
@@ -146,6 +150,7 @@ async function validateYAML(
 
 	return null;
 }
+
 async function runValidation() {
 	const failures: ValidationError[] = [];
 

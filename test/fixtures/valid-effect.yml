@@ -1,0 +1,11 @@
+created: 2024-05-18
+contributor: test@example.com
+paper: 10.1038/nature.2024.001
+
+effect: muscle-strength
+kind: intended
+direction: positive
+description: "Test effect description"
+strength: strong
+dosage_min: 3
+dosage_max: 5
