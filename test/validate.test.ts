@@ -50,8 +50,82 @@ describe("safeTryCatch utilities", () => {
 	});
 });
 
+describe("paper_quotes validation", () => {
+	const Ajv = require("ajv");
+	const addFormats = require("ajv-formats");
+
+	const testFixturesDir = path.join(process.cwd(), "test", "fixtures");
+	const testVocabDir = path.join(process.cwd(), "test", "fixtures");
+
+	const ajv = new Ajv({ allErrors: true, strict: false });
+	addFormats(ajv);
+
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it("should validate effect claim with paper_quotes", async () => {
+		// Mock successful DOI check
+		vi.mocked(axios.head).mockResolvedValue({ status: 200 } as AxiosResponse);
+
+		const effectsVocab = await loadVocabulary(
+			"test-effects-vocab",
+			testVocabDir,
+		);
+		const schema = await loadSchema("effects");
+		const validateFn = ajv.compile(schema);
+		const filePath = path.join(testFixturesDir, "valid-effect-with-quotes.yml");
+
+		const result = await validateYAML(filePath, validateFn, true, {
+			field: "effect",
+			vocabulary: effectsVocab,
+		});
+
+		expect(result).toBeNull();
+	});
+
+	it("should validate biomarker claim with paper_quotes", async () => {
+		// Mock successful DOI check
+		vi.mocked(axios.head).mockResolvedValue({ status: 200 } as AxiosResponse);
+
+		const biomarkersVocab = await loadVocabulary(
+			"test-biomarkers-vocab",
+			testVocabDir,
+		);
+		const schema = await loadSchema("biomarkers");
+		const validateFn = ajv.compile(schema);
+		const filePath = path.join(testFixturesDir, "valid-biomarker-with-quotes.yml");
+
+		const result = await validateYAML(filePath, validateFn, true, {
+			field: "biomarker",
+			vocabulary: biomarkersVocab,
+		});
+
+		expect(result).toBeNull();
+	});
+
+	it("should accept claims without paper_quotes (optional field)", async () => {
+		// Mock successful DOI check
+		vi.mocked(axios.head).mockResolvedValue({ status: 200 } as AxiosResponse);
+
+		const effectsVocab = await loadVocabulary(
+			"test-effects-vocab",
+			testVocabDir,
+		);
+		const schema = await loadSchema("effects");
+		const validateFn = ajv.compile(schema);
+		const filePath = path.join(testFixturesDir, "valid-effect.yml");
+
+		const result = await validateYAML(filePath, validateFn, true, {
+			field: "effect",
+			vocabulary: effectsVocab,
+		});
+
+		expect(result).toBeNull();
+	});
+});
+
 describe("loadVocabulary", () => {
-	const YAML = require("yaml");
 	const testVocabDir = path.join(process.cwd(), "test", "fixtures");
 
 	it("should load valid vocabulary file", async () => {

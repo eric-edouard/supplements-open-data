@@ -1,0 +1,20 @@
+created: 2024-05-18
+contributor: alice@example.com
+paper: 10.1038/s41586-2024-00001
+effect: muscle-strength
+kind: intended
+direction: positive
+description: "Increases maximal voluntary contraction force"
+strength: strong
+p_value: 0.02
+effect_size: "Cohen's d = 0.8"
+dosage_min: 3
+dosage_max: 5
+timing: pre-exercise
+paper_quotes:
+  abstract:
+    - "Creatine supplementation (5g/day for 6 weeks) significantly increased maximal voluntary contraction force by 23% compared to placebo (p=0.02)."
+    - "The intervention group showed marked improvements in muscle strength parameters across all tested muscle groups."
+  paper_content:
+    - "Analysis of muscle biopsies revealed a 35% increase in phosphocreatine stores following the supplementation protocol."
+    - "Participants reported subjective improvements in workout performance, with 87% noting increased ability to complete high-intensity sets."

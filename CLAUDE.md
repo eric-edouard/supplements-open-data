@@ -53,6 +53,16 @@ The validation pipeline (`scripts/validate.ts`) performs:
 - **Synergies**: Beneficial combinations with other compounds
 - **Addiction/Withdrawal**: Dependency and withdrawal symptoms
 
+### Paper Quotes
+All claim types support an optional `paper_quotes` field that allows contributors to include verbatim quotes from the research paper:
+```yaml
+paper_quotes:
+  abstract:
+    - "Quote from abstract"
+  paper_content:
+    - "Quote from paper body"
+```
+
 ### Vocabulary Control
 Effects and biomarkers must match entries in:
 - `vocab/effects.yml`
