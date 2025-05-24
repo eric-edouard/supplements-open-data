@@ -24,8 +24,8 @@
 - nitric-oxide
 
 # Metabolic / Inflammation
-- fasting-glucose
-- a1c
+- blood-glucose
+- hemoglobin-a1c
 - insulin
 - homa-ir
 - triglycerides
@@ -45,6 +45,7 @@
 - ggt
 - glutathione
 - oxidative-stress
+- malondialdehyde
 
 # Blood / Oxygen
 - hemoglobin
