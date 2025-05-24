@@ -8,7 +8,6 @@
 - soreness
 - anaerobic-performance
 - aerobic-performance
-- vo2max
 
 # Cognition & Focus
 - memory-formation
@@ -53,26 +52,22 @@
 
 # Metabolic Health
 - insulin-sensitivity
-- blood-glucose
-- fasting-glucose
-- triglycerides
-- hdl
-- ldl
+- glucose-control
+- lipid-profile
 - body-fat
 - basal-metabolic-rate
 - appetite
-- weight
+- weight-management
 
 # Cardiovascular
-- blood-pressure
+- cardiovascular-health
 - arterial-stiffness
 - endothelial-function
 - circulation
-- heart-rate-variability
+- cardiac-performance
 
 # Hormonal & Sexual
-- testosterone
-- estrogen-balance
+- hormonal-balance
 - libido
 - erectile-function
 - sperm-count
@@ -80,16 +75,15 @@
 - pms-symptoms
 
 # Immunity
-- immune-cell-count
+- immune-function
 - infection-resistance
 - antibody-response
 - inflammation
-- crp
 
 # Joint & Bone
 - joint-pain
 - cartilage-integrity
-- bone-density
+- bone-health
 - bone-healing
 - osteoarthritis-symptoms
 
