@@ -151,60 +151,114 @@ export async function validateYAML(
 	return null;
 }
 
-async function runValidation() {
+async function runValidation(specificFiles?: string[]) {
 	const failures: ValidationError[] = [];
 
 	// Load vocabularies
 	const effectsVocab = await loadVocabulary("effects");
 	const biomarkersVocab = await loadVocabulary("biomarkers");
 
-	// Meta files
-	const metaSchema = await loadSchema("meta");
-	const validateMeta = ajv.compile(metaSchema);
-	const metaFiles = await glob(`${SUPP_DIR}/*/meta.yml`);
-	for (const file of metaFiles) {
-		const result = await validateYAML(file, validateMeta, false);
-		if (result) failures.push(result);
-	}
+	// If specific files are provided, only validate those
+	if (specificFiles && specificFiles.length > 0) {
+		console.log(`Validating ${specificFiles.length} changed file(s)...`);
+		
+		for (const filePath of specificFiles) {
+			// Determine file type based on path
+			if (filePath.includes("/meta.yml")) {
+				const metaSchema = await loadSchema("meta");
+				const validateMeta = ajv.compile(metaSchema);
+				const result = await validateYAML(filePath, validateMeta, false);
+				if (result) failures.push(result);
+			} else if (filePath.includes("/claims/")) {
+				// Extract claim type from path
+				const claimTypeMatch = filePath.match(/\/claims\/([^\/]+)\//);
+				if (claimTypeMatch) {
+					const type = claimTypeMatch[1];
+					try {
+						const schema = await loadSchema(type);
+						const validateFn = ajv.compile(schema);
+						
+						// Determine vocabulary validation
+						let vocabularyValidation:
+							| { field: string; vocabulary: string[] }
+							| undefined;
+						if (type === "effects") {
+							vocabularyValidation = { field: "effect", vocabulary: effectsVocab };
+						} else if (type === "biomarkers") {
+							vocabularyValidation = {
+								field: "biomarker",
+								vocabulary: biomarkersVocab,
+							};
+						}
 
-	// Claim types
-	const types = [
-		"effects",
-		"biomarkers",
-		"cycles",
-		"interactions",
-		"formulations",
-		"toxicity",
-		"synergies",
-		"addiction-withdrawal",
-	];
-
-	for (const type of types) {
-		const schema = await loadSchema(type);
-		const validateFn = ajv.compile(schema);
-		const files = await glob(`${SUPP_DIR}/*/claims/${type}/*.yml`);
-
-		// Determine vocabulary validation
-		let vocabularyValidation:
-			| { field: string; vocabulary: string[] }
-			| undefined;
-		if (type === "effects") {
-			vocabularyValidation = { field: "effect", vocabulary: effectsVocab };
-		} else if (type === "biomarkers") {
-			vocabularyValidation = {
-				field: "biomarker",
-				vocabulary: biomarkersVocab,
-			};
+						const result = await validateYAML(
+							filePath,
+							validateFn,
+							true,
+							vocabularyValidation,
+						);
+						if (result) failures.push(result);
+					} catch (error) {
+						failures.push({
+							filePath,
+							errors: [{ message: `Unknown claim type: ${type}` }],
+						});
+					}
+				}
+			}
+		}
+	} else {
+		// Original full validation logic
+		console.log("Running full validation...");
+		
+		// Meta files
+		const metaSchema = await loadSchema("meta");
+		const validateMeta = ajv.compile(metaSchema);
+		const metaFiles = await glob(`${SUPP_DIR}/*/meta.yml`);
+		for (const file of metaFiles) {
+			const result = await validateYAML(file, validateMeta, false);
+			if (result) failures.push(result);
 		}
 
-		for (const file of files) {
-			const result = await validateYAML(
-				file,
-				validateFn,
-				true,
-				vocabularyValidation,
-			);
-			if (result) failures.push(result);
+		// Claim types
+		const types = [
+			"effects",
+			"biomarkers",
+			"cycles",
+			"interactions",
+			"formulations",
+			"toxicity",
+			"synergies",
+			"addiction-withdrawal",
+		];
+
+		for (const type of types) {
+			const schema = await loadSchema(type);
+			const validateFn = ajv.compile(schema);
+			const files = await glob(`${SUPP_DIR}/*/claims/${type}/*.yml`);
+
+			// Determine vocabulary validation
+			let vocabularyValidation:
+				| { field: string; vocabulary: string[] }
+				| undefined;
+			if (type === "effects") {
+				vocabularyValidation = { field: "effect", vocabulary: effectsVocab };
+			} else if (type === "biomarkers") {
+				vocabularyValidation = {
+					field: "biomarker",
+					vocabulary: biomarkersVocab,
+				};
+			}
+
+			for (const file of files) {
+				const result = await validateYAML(
+					file,
+					validateFn,
+					true,
+					vocabularyValidation,
+				);
+				if (result) failures.push(result);
+			}
 		}
 	}
 
@@ -223,4 +277,8 @@ async function runValidation() {
 	}
 }
 
-runValidation();
+// Parse command line arguments
+const args = process.argv.slice(2);
+const specificFiles = args.length > 0 ? args : undefined;
+
+runValidation(specificFiles);
