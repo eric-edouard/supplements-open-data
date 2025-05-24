@@ -7,6 +7,23 @@
 		"contributor": { "type": "string" },
 		"paper": { "type": "string" },
 		"symptom": { "type": "string" },
-		"incidence_percent": { "type": "number" }
+		"incidence_percent": { "type": "number" },
+		"paper_quotes": {
+			"type": "object",
+			"properties": {
+				"abstract": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"paper_content": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	}
 }

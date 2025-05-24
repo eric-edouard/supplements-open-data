@@ -16,7 +16,24 @@
 				"positive"
 			]
 		},
-		"change_percent": { "type": "number" }
+		"change_percent": { "type": "number" },
+		"paper_quotes": {
+			"type": "object",
+			"properties": {
+				"abstract": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"paper_content": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	},
 	"anyOf": [{ "required": ["change"] }, { "required": ["change_percent"] }]
 }

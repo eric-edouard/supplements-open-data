@@ -8,6 +8,23 @@
 		"paper": { "type": "string" },
 		"target": { "type": "string" },
 		"danger_level": { "enum": ["low", "mild", "severe"] },
-		"description": { "type": "string" }
+		"description": { "type": "string" },
+		"paper_quotes": {
+			"type": "object",
+			"properties": {
+				"abstract": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"paper_content": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	}
 }

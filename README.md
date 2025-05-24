@@ -132,8 +132,22 @@ To keep the dataset clean, sortable, and audit-friendly, every claim file follow
 | `created` | ✔︎ | date created |
 | `contributor` | ✔︎ | email / github link profile |
 | `paper` | ✔︎ | DOI |
+| `paper_quotes` | - | verbatim quotes from the paper supporting the claim |
 | `misc` | - | free text |
 
+### Paper Quotes Structure
+
+The `paper_quotes` field allows you to include verbatim quotes from the paper that support the claim:
+
+```yaml
+paper_quotes:
+  abstract:
+    - "First quote from abstract"
+    - "Second quote from abstract"
+  paper_content:
+    - "Quote from the paper body"
+    - "Another quote from methods or results"
+```
 
 Example: 
 ```yaml
@@ -141,6 +155,12 @@ created: 2024-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
+# Optional paper quotes
+paper_quotes:
+  abstract:
+    - "Creatine supplementation significantly increased muscle strength by 23% (p<0.05)"
+  paper_content:
+    - "Muscle biopsies showed 35% increase in phosphocreatine stores"
 
 # --- type‑specific keys follow ---
 ```

@@ -18,6 +18,23 @@
 		},
 		"change_percent": { "type": "number" },
 		"effect": { "type": "string" },
-		"population": { "type": "string" }
+		"population": { "type": "string" },
+		"paper_quotes": {
+			"type": "object",
+			"properties": {
+				"abstract": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"paper_content": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	}
 }

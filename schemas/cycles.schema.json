@@ -9,6 +9,23 @@
 		"cycle": { "enum": ["none", "suggested", "recommended"] },
 		"days_on_off": { "type": "string" },
 		"weeks_on_off": { "type": "string" },
-		"months_on_off": { "type": "string" }
+		"months_on_off": { "type": "string" },
+		"paper_quotes": {
+			"type": "object",
+			"properties": {
+				"abstract": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"paper_content": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	}
 }

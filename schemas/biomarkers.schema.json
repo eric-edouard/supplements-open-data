@@ -17,6 +17,23 @@
 		"strength": { "enum": ["strong", "moderate", "weak", "none"] },
 		"dosage_min": { "type": "number" },
 		"dosage_max": { "type": "number" },
-		"timing": { "type": "string" }
+		"timing": { "type": "string" },
+		"paper_quotes": {
+			"type": "object",
+			"properties": {
+				"abstract": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"paper_content": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				}
+			}
+		}
 	}
 }
