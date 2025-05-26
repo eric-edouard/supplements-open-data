@@ -1,0 +1,16 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+effect: endurance
+kind: intended
+direction: positive
+description: Taurine supplementation improved overall endurance performance and
+  time to exhaustion
+strength: moderate
+dosage_min: 1000
+dosage_max: 6000
+paper: 10.1007/s40279-018-0896-2
+paper_quotes:
+  abstract:
+    - Taurine ingestion improved overall endurance performance (Hedges' g =
+      0.40, 95% CI 0.12-0.67, P = 0.004), which was similar in TTE trials
+      (Hedges' g = 0.43, 95% CI 0.12-0.75, P = 0.007).

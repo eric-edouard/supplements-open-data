@@ -1,0 +1,14 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+biomarker: blood-pressure
+direction: negative
+strength: moderate
+dosage_min: 500
+dosage_max: 6000
+paper: 10.1016/j.ejphar.2020.173533
+paper_quotes:
+  abstract:
+    - "Pooled effect sizes suggested a significant effect of taurine
+      administration on systolic blood pressure (weighted mean difference (WMD):
+      -4.67 mm Hg; 95%CI, -9.10 to -0.25), diastolic blood pressure (WMD: -2.90
+      mm Hg; 95%CI, -4.29 to -1.52)"

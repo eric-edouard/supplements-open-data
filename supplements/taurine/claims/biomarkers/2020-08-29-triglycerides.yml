@@ -1,0 +1,11 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+biomarker: triglycerides
+direction: negative
+strength: moderate
+dosage_min: 500
+dosage_max: 6000
+paper: 10.1016/j.ejphar.2020.173533
+paper_quotes:
+  abstract:
+    - "triglycerides (WMD: -13.05 mg/dl; 95%CI, -25.88 to -0.22)"

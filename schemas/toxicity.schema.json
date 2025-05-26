@@ -1,40 +1,34 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"type": "object",
-	"required": ["created", "contributor", "paper", "threshold_amount"],
-	"properties": {
-		"created": { "type": "string" },
-		"contributor": { "type": "string" },
-		"paper": { "type": "string" },
-		"threshold_amount": { "type": "number" },
-		"change": {
-			"enum": [
-				"negative",
-				"slightly-negative",
-				"neutral",
-				"slightly-positive",
-				"positive"
-			]
-		},
-		"change_percent": { "type": "number" },
-		"effect": { "type": "string" },
-		"population": { "type": "string" },
-		"paper_quotes": {
-			"type": "object",
-			"properties": {
-				"abstract": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"paper_content": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			}
-		}
-	}
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["created", "contributor", "paper", "threshold_amount"],
+  "properties": {
+    "created": { "type": "string" },
+    "contributor": { "type": "string" },
+    "paper": { "type": "string" },
+    "threshold_amount": { "type": "number" },
+    "change": {
+      "enum": ["negative", "slightly-negative", "neutral", "slightly-positive", "positive"]
+    },
+    "change_percent": { "type": "number" },
+    "effect": { "type": "string" },
+    "population": { "type": "string" },
+    "paper_quotes": {
+      "type": "object",
+      "properties": {
+        "abstract": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "paper_content": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
 }

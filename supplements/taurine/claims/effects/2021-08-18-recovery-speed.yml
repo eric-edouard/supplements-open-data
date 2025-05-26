@@ -1,0 +1,18 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+effect: recovery-speed
+kind: intended
+direction: positive
+description: Taurine supplementation before exercise reduces markers of muscle
+  damage and DNA damage
+strength: moderate
+dosage_min: 1000
+dosage_max: 6000
+paper: 10.3389/fphys.2021.700352
+paper_quotes:
+  abstract:
+    - From the selected literature, we observed that taurine supplementation (2
+      g three times daily) with exercise can decrease DNA damage.
+    - Finally, we observed that a low dose of taurine (0.05 g) before performing
+      strength enhancing exercises can decrease muscular fatigue and increase
+      enzymatic antioxidants.

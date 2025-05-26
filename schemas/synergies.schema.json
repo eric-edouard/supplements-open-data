@@ -1,31 +1,31 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"type": "object",
-	"required": ["created", "contributor", "paper", "with_compound"],
-	"properties": {
-		"created": { "type": "string" },
-		"contributor": { "type": "string" },
-		"paper": { "type": "string" },
-		"with_compound": { "type": "string" },
-		"strength": { "enum": ["light", "mild", "strong"] },
-		"change_percent": { "type": "number" },
-		"paper_quotes": {
-			"type": "object",
-			"properties": {
-				"abstract": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"paper_content": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			}
-		}
-	},
-	"anyOf": [{ "required": ["strength"] }, { "required": ["change_percent"] }]
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["created", "contributor", "paper", "with_compound"],
+  "properties": {
+    "created": { "type": "string" },
+    "contributor": { "type": "string" },
+    "paper": { "type": "string" },
+    "with_compound": { "type": "string" },
+    "strength": { "enum": ["light", "mild", "strong"] },
+    "change_percent": { "type": "number" },
+    "paper_quotes": {
+      "type": "object",
+      "properties": {
+        "abstract": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "paper_content": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "anyOf": [{ "required": ["strength"] }, { "required": ["change_percent"] }]
 }
