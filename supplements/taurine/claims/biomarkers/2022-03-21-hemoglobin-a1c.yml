@@ -1,0 +1,12 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+biomarker: hemoglobin-a1c
+direction: negative
+strength: moderate
+dosage_min: 500
+dosage_max: 6000
+paper: 10.1016/j.fochms.2022.100106
+paper_quotes:
+  abstract:
+    - "Compared with the control group, taurine could significantly reduce HbA1c
+      (SMD -0.41[95% CI: -0.74, -0.09], p = 0.01)"

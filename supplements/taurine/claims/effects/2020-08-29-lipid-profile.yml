@@ -1,0 +1,15 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+effect: lipid-profile
+kind: intended
+direction: positive
+description: Taurine supplementation significantly reduced total cholesterol and
+  triglycerides
+strength: moderate
+dosage_min: 500
+dosage_max: 6000
+paper: 10.1016/j.ejphar.2020.173533
+paper_quotes:
+  abstract:
+    - "total cholesterol (WMD: -10.87 mg/dl; 95%CI, -16.96 to -4.79), and
+      triglycerides (WMD: -13.05 mg/dl; 95%CI, -25.88 to -0.22)"

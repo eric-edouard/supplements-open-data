@@ -1,0 +1,19 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+effect: cellular-senescence
+kind: intended
+direction: negative
+description: Taurine supplementation reduced cellular senescence as one of the
+  hallmarks of aging
+strength: moderate
+dosage_min: 1000
+dosage_max: 1000
+paper: 10.1126/science.abn9257
+paper_quotes:
+  abstract:
+    - Mechanistically, taurine reduced cellular senescence, protected against
+      telomerase deficiency, suppressed mitochondrial dysfunction, decreased DNA
+      damage, and attenuated inflammaging.
+    - Taurine reduced cellular senescence, protected against telomerase
+      deficiency, suppressed mitochondrial dysfunction, decreased DNA damage,
+      and attenuated inflammation.

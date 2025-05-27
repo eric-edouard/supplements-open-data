@@ -1,0 +1,18 @@
+created: 2025-05-26
+contributor: extractor@supplementshub.io
+effect: glucose-control
+kind: intended
+direction: positive
+description: Taurine supplementation significantly reduced fasting blood glucose
+  in metabolic syndrome patients
+strength: moderate
+dosage_min: 500
+dosage_max: 6000
+paper: 10.1038/s41387-024-00289-z
+paper_quotes:
+  abstract:
+    - "Compared to control groups, taurine supplementation demonstrated
+      statistically significant reductions in SBP (weighted mean difference
+      [WMD] = −3.999 mmHg, 95% confidence interval [CI] = −7.293 to −0.706, p =
+      0.017), DBP (WMD = −1.509 mmHg, 95% CI = −2.479 to −0.539, p = 0.002), FBG
+      (WMD: −5.882 mg/dL, 95% CI: −10.747 to −1.018, p = 0.018)"
