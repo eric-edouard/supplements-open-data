@@ -1,6 +1,7 @@
 import Ajv, { type ValidateFunction } from "ajv";
 import addFormats from "ajv-formats";
 import axios from "axios";
+import { backOff } from "exponential-backoff";
 import { glob } from "glob";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -138,12 +139,39 @@ export async function validateYAML(
 	}
 
 	if (validateDOI && typeof data === "object" && data && "paper" in data) {
-		const doiUrl = `https://doi.org/${(data as { paper: string }).paper}`;
-		const [doiError, res] = await safeTryCatchAsync(() => axios.head(doiUrl));
-		if (doiError || (res && res.status >= 400)) {
+		const doi = (data as { paper: string }).paper;
+		const semanticScholarUrl = `https://api.semanticscholar.org/graph/v1/paper/DOI:${doi}`;
+		
+		try {
+			await backOff(
+				async () => {
+					const response = await axios.get(semanticScholarUrl);
+					if (response.status !== 200) {
+						throw new Error(`API returned status ${response.status}`);
+					}
+				},
+				{
+					numOfAttempts: 3,
+					startingDelay: 1000,
+					timeMultiple: 2,
+					retry: (error: unknown) => {
+						// Retry on 429 (rate limit) or network errors
+						const axiosError = error as { response?: { status?: number } };
+						return axiosError.response?.status === 429 || !axiosError.response;
+					},
+				}
+			);
+		} catch (error: unknown) {
+			const axiosError = error as { response?: { status?: number } };
+			if (axiosError.response?.status === 404) {
+				return {
+					filePath,
+					errors: [{ message: "DOI not found in Semantic Scholar" }],
+				};
+			}
 			return {
 				filePath,
-				errors: [{ message: "DOI unreachable" }],
+				errors: [{ message: "DOI validation failed" }],
 			};
 		}
 	}
