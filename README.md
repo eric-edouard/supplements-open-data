@@ -9,7 +9,7 @@
 
 * **Transparent** – Each claim is a commit with author, timestamp and paper link.  
 * **Structured** – Strict JSON Schemas keep the facts machine‑friendly.  
-* **Open** – Licensed CC‑BY‑4.0; fork it, analyse it, improve it.
+* **Open** – Licensed CC‑BY‑4.0;
 
 ---
 
@@ -375,40 +375,19 @@ incidence_percent: 20
 
 ## 🤝 How to contribute
 
-### 1 Easy mode – web form
+### Pull request
 
-1. Visit a supplement page on **supplementshub.io** → click **"Add evidence".**  
-2. Fill the form (DOI required).  
-3. Our bot opens a pull‑request in this repo; follow the link.
-
-### 2 Power mode – pull request
-
-1. Fork → create a branch.  
-2. Drop your `.yml` into the correct sub‑folder.  
+1. Create a branch.  
+2. Drop your `.yml` claim files into the correct supplement folder.
+3. If you created new supplements, just add them to supplements/ and don't forget to create the meta.yml for this supplement
+3. If you created new vocabulary, don't forget to add it in ./vocab/
 3. `npm install && npm run validate` to check against schemas.  
-4. Open PR – template walks you through licence checkbox & strength selection.
+4. Open PR
 
 ### CI gates every PR
 
 * JSON Schema ✔︎  
 * DOI resolves ✔︎  
-* Text–abstract similarity ≥ 0.15 ✔︎  
 
 Green ticks → human review → merge.
 
----
-
-## 📜 Licence
-
-* **facts** – Creative Commons [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)  
-  Feel free to use & remix; just credit *Supplements Hub*.  
-* **Application code** lives in the private `suphub-app` repo (MIT).
-
----
-
-## 💬 Need help?
-
-* Open an [Issue](https://github.com/YOUR_ORG/supplements-open-facts/issues).  
-* Email: [contact@supplementshub.io](mailto:contact@supplementshub.io)
-
-*Thank you for keeping supplement science honest!*  
