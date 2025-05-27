@@ -378,7 +378,7 @@ incidence_percent: 20
 ### Pull request
 
 1. Create a branch.  
-2. Drop your `.yml` claim files into the correct supplement folder.
+2. Create your `.yml` claim files into the correct supplement folder and make sure they are the proper format and follow the guidelines as described above
 3. If you created new supplements, just add them to supplements/ and don't forget to create the meta.yml for this supplement
 3. If you created new vocabulary, don't forget to add it in ./vocab/
 3. `npm install && npm run validate` to check against schemas.  
