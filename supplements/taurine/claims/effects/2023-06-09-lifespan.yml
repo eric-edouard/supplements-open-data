@@ -1,0 +1,16 @@
+created: 2025-01-27
+contributor: https://github.com/eric-edouard
+paper: 10.1126/science.abn9257
+
+paper_quotes:
+  abstract:
+    - "Taurine-fed mice of both sexes survived longer than the control mice. The median life span of taurine-treated mice increased by 10 to 12%, and life expectancy at 28 months increased by about 18 to 25%"
+  paper_content:
+    - "taurine supplementation increased median lifespan by 10 to 12% in both sexes and maximum lifespan by 18 to 25%"
+
+effect: lifespan
+kind: intended
+direction: positive
+description: "Increases lifespan in mice by 10-12% (median) and up to 25% (life expectancy at 28 months)"
+strength: strong
+p_value: 0.001

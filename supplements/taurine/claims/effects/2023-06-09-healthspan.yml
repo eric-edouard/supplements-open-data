@@ -1,0 +1,15 @@
+created: 2025-01-27
+contributor: https://github.com/eric-edouard
+paper: 10.1126/science.abn9257
+
+paper_quotes:
+  abstract:
+    - "We, therefore, investigated the health of taurine-fed middle-aged mice and found an improved functioning of bone, muscle, pancreas, brain, fat, gut, and immune system, indicating an overall increase in health span"
+  paper_content:
+    - "Taurine supplementation increases health span and life span in mice and worms and health span in monkeys"
+
+effect: healthspan
+kind: intended
+direction: positive
+description: "Improved functioning of bone, muscle, pancreas, brain, fat, gut, and immune system in mice"
+strength: strong

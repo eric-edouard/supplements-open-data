@@ -1,0 +1,13 @@
+created: 2025-01-27
+contributor: https://github.com/eric-edouard
+paper: 10.1126/science.abn9257
+
+paper_quotes:
+  abstract:
+    - "Taurine reduced cellular senescence, protected against telomerase deficiency, suppressed mitochondrial dysfunction, decreased DNA damage, and attenuated inflammation"
+
+effect: mitochondrial-function
+kind: intended
+direction: positive
+description: "Suppressed mitochondrial dysfunction in aging mice"
+strength: strong
