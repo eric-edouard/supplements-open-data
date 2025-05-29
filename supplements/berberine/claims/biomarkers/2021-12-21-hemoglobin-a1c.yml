@@ -4,7 +4,8 @@ paper: 10.1155/2021/2074610
 
 paper_quotes:
   abstract:
-    - "Glycemic metabolisms were the main factors studied, including glycosylated hemoglobin (HbA1c), fasting plasm glucose (FPG), and 2-hour postprandial blood glucose (2hPG). Insulin resistance was estimated by fasting blood insulin (FINS), homeostasis model assessment-insulin resistance (HOMA-IR), and body mass index (BMI). Lipid profiles were also assessed, including triglyceride (TG), total cholesterol (TC), low-density lipoprotein (LDL), and high-density lipoprotein (HDL)"
+    - "Analysis of berberine applied alone or with standard diabetic therapies versus the control group revealed significant reductions in HbA1c (MD = −0.73; 95% CI (−0.97, −0.51))"
+    - "Forty-six trials were assessed"
 
 biomarker: hemoglobin-a1c
 direction: negative

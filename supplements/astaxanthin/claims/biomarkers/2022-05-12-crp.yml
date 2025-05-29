@@ -7,6 +7,6 @@ paper_quotes:
     - "Results show marginal effects of astaxanthin on reduction in total cholesterol and systolic blood pressure, and a significant attenuating effect on low-density lipoprotein cholesterol"
     - "A total of 7 studies met the inclusion criteria with 321 participants"
 
-biomarker: ldl
+biomarker: crp
 direction: negative
-strength: strong
+strength: moderate

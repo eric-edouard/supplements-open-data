@@ -1,14 +1,14 @@
-created: 2024-05-29
-contributor: claude-code@anthropic.com
-paper: 10.1371/journal.pmed.0020135
+created: 2025-01-27
+contributor: https://github.com/eric-edouard
+paper: 10.1186/1550-2783-10-39
 
 paper_quotes:
   abstract:
-    - "Meta-analysis have shown that taking up to 4 grams of TMG per day for 6 weeks can lower blood homocysteine in healthy adults"
+    - "A significant interaction (p < .05) existed for HCTL, with increases from BL to week 2 in PL, but not BET. Additionally, HCTL remained elevated at week 4 in PL, but not BET"
+    - "Six-weeks of betaine supplementation improved body composition, arm size, bench press work capacity, attenuated the rise in urinary HCTL"
 
 biomarker: homocysteine
 direction: negative
 strength: strong
-dosage_min: 1
-dosage_max: 4
-timing: with-meal
+dosage_min: 2500
+dosage_max: 2500
