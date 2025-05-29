@@ -34,6 +34,9 @@ const VOCAB_DIR = path.join(process.cwd(), "vocab");
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
 
+// Cache for DOI validation results
+const doiValidationCache = new Map<string, boolean>();
+
 export async function loadSchema(name: string): Promise<object> {
 	const schemaPath = path.join(SCHEMA_DIR, `${name}.schema.json`);
 	const raw = await fs.readFile(schemaPath, "utf-8");
@@ -246,14 +249,93 @@ export async function validateYAML(
 
 	if (validateDOI && typeof data === "object" && data && "paper" in data) {
 		const doi = (data as { paper: string }).paper;
-		const semanticScholarUrl = `https://api.semanticscholar.org/graph/v1/paper/DOI:${doi}`;
+		
+		// Check cache for DOI validation result
+		const isValid = doiValidationCache.get(doi);
+		if (isValid === false) {
+			return {
+				filePath,
+				errors: [{ message: "DOI not found in Semantic Scholar" }],
+			};
+		}
+		// If isValid is undefined, DOI validation was skipped (cache not populated)
+		// If isValid is true, DOI is valid - continue
+	}
 
+	return null;
+}
+
+// Collect all DOIs from files that need validation
+async function collectDOIs(files: string[]): Promise<Set<string>> {
+	const dois = new Set<string>();
+	
+	for (const filePath of files) {
+		// Only check claim files that might have DOIs
+		if (!filePath.includes("/claims/")) continue;
+		
+		try {
+			const content = await fs.readFile(filePath, "utf-8");
+			const [parseError, data] = safeTryCatch(() => YAML.parse(content));
+			
+			if (!parseError && typeof data === "object" && data && "paper" in data) {
+				const doi = (data as { paper: string }).paper;
+				if (doi && typeof doi === "string") {
+					dois.add(doi);
+				}
+			}
+		} catch {
+			// Skip files that can't be read or parsed
+		}
+	}
+	
+	return dois;
+}
+
+// Validate DOIs in batches using Semantic Scholar batch API
+async function validateDOIsInBatch(dois: string[]): Promise<void> {
+	const BATCH_SIZE = 500;
+	const batches: string[][] = [];
+	
+	// Split DOIs into batches of 500
+	for (let i = 0; i < dois.length; i += BATCH_SIZE) {
+		batches.push(dois.slice(i, i + BATCH_SIZE));
+	}
+	
+	console.log(`  🔍 Validating ${dois.length} DOIs in ${batches.length} batch(es)...`);
+	
+	for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+		const batch = batches[batchIndex];
+		console.log(`    Batch ${batchIndex + 1}/${batches.length} (${batch.length} DOIs)`);
+		
 		try {
 			await backOff(
 				async () => {
-					const response = await axios.get(semanticScholarUrl);
+					const response = await axios.post(
+						"https://api.semanticscholar.org/graph/v1/paper/batch",
+						{
+							ids: batch.map(doi => `DOI:${doi}`)
+						},
+						{
+							params: {
+								fields: "paperId,title"
+							},
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						}
+					);
+					
 					if (response.status !== 200) {
 						throw new Error(`API returned status ${response.status}`);
+					}
+					
+					// Process response to cache validation results
+					const papers = response.data;
+					for (let i = 0; i < batch.length; i++) {
+						const doi = batch[i];
+						const paper = papers[i];
+						// If paper is null, DOI was not found
+						doiValidationCache.set(doi, paper !== null);
 					}
 				},
 				{
@@ -265,24 +347,16 @@ export async function validateYAML(
 						const axiosError = error as { response?: { status?: number } };
 						return axiosError.response?.status === 429 || !axiosError.response;
 					},
-				},
+				}
 			);
 		} catch (error: unknown) {
-			const axiosError = error as { response?: { status?: number } };
-			if (axiosError.response?.status === 404) {
-				return {
-					filePath,
-					errors: [{ message: "DOI not found in Semantic Scholar" }],
-				};
+			console.error(`    ❌ Batch ${batchIndex + 1} failed, marking all DOIs as invalid`);
+			// Mark all DOIs in this batch as invalid
+			for (const doi of batch) {
+				doiValidationCache.set(doi, false);
 			}
-			return {
-				filePath,
-				errors: [{ message: "DOI validation failed" }],
-			};
 		}
 	}
-
-	return null;
 }
 
 async function runValidation(specificFiles?: string[]) {
@@ -295,6 +369,12 @@ async function runValidation(specificFiles?: string[]) {
 	// If specific files are provided, only validate those
 	if (specificFiles && specificFiles.length > 0) {
 		console.log(`Validating ${specificFiles.length} changed file(s)...`);
+		
+		// Pre-validate all DOIs in batch
+		const dois = await collectDOIs(specificFiles);
+		if (dois.size > 0) {
+			await validateDOIsInBatch(Array.from(dois));
+		}
 
 		for (const filePath of specificFiles) {
 			console.log(`  📄 ${path.relative(process.cwd(), filePath)}`);
@@ -374,6 +454,13 @@ async function runValidation(specificFiles?: string[]) {
 		for (const type of claimTypes) {
 			const schema = await loadSchema(type);
 			schemaValidators[type] = ajv.compile(schema);
+		}
+
+		// Pre-validate all DOIs in batch
+		const allClaimFiles = await glob(`${SUPP_DIR}/*/claims/*/*.yml`);
+		const dois = await collectDOIs(allClaimFiles);
+		if (dois.size > 0) {
+			await validateDOIsInBatch(Array.from(dois));
 		}
 
 		// Validate each supplement
