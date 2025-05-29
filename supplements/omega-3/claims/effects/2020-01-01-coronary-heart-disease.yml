@@ -1,0 +1,15 @@
+created: 2025-01-29
+contributor: https://github.com/eric-edouard
+paper: 10.1161/JAHA.119.013543
+
+paper_quotes:
+  abstract:
+    - "marine omega‐3 supplementation was associated with significantly lower risk of myocardial infarction (rate ratio [RR] [95% CI]: 0.92 [0.86, 0.99]; P=0.020), CHD death (RR [95% CI]: 0.92 [0.86, 0.98]; P=0.014), total CHD (RR [95% CI]: 0.95 [0.91, 0.99]; P=0.008)"
+    - "Marine omega‐3 supplementation lowers risk for myocardial infarction, CHD death, total CHD, CVD death, and total CVD"
+
+effect: cardiovascular-health
+kind: intended
+direction: positive
+description: "Significantly lowers risk of myocardial infarction, coronary heart disease death, and total CHD events"
+strength: strong
+p_value: 0.008
