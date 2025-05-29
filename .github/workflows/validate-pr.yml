@@ -25,29 +25,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Get changed files
-        id: changed-files
-        run: |
-          # Get changed files in the PR
-          git fetch origin main
-          changed_files=$(git diff --name-only origin/main...HEAD | grep -E "^supplements/.*/claims/.*\.yml$" || true)
-          
-          # Output for debugging
-          echo "Changed claim files:"
-          echo "$changed_files"
-          
-          # Set output for next steps
-          if [ -n "$changed_files" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            # Convert to space-separated for easy parsing
-            echo "files<<EOF" >> $GITHUB_OUTPUT
-            echo "$changed_files" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "files=" >> $GITHUB_OUTPUT
-          fi
-
       - name: Run tests
         id: test
         run: |
@@ -66,23 +43,15 @@ jobs:
         id: validate
         if: steps.test.outputs.test_status == 'success'
         run: |
-          if [ "${{ steps.changed-files.outputs.has_changes }}" = "true" ]; then
-            echo "Running validation on changed files..."
-            # Convert newline-separated files to space-separated arguments
-            files="${{ steps.changed-files.outputs.files }}"
-            if npx tsx scripts/validate.ts $files 2>&1 | tee validation_output.txt; then
-              echo "validation_status=success" >> $GITHUB_OUTPUT
-              echo "validation_message=✅ All changed files are valid." >> $GITHUB_OUTPUT
-            else
-              echo "validation_status=failure" >> $GITHUB_OUTPUT
-              # Capture the error output and format it for GitHub
-              error_message=$(cat validation_output.txt | sed 's/$/\\n/' | tr -d '\n')
-              echo "validation_message=$error_message" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "No claim files changed, skipping validation..."
+          echo "Running full validation on all files..."
+          if npm run validate 2>&1 | tee validation_output.txt; then
             echo "validation_status=success" >> $GITHUB_OUTPUT
-            echo "validation_message=✅ No claim files changed." >> $GITHUB_OUTPUT
+            echo "validation_message=✅ All files are valid." >> $GITHUB_OUTPUT
+          else
+            echo "validation_status=failure" >> $GITHUB_OUTPUT
+            # Capture the error output and format it for GitHub
+            error_message=$(cat validation_output.txt | sed 's/$/\\n/' | tr -d '\n')
+            echo "validation_message=$error_message" >> $GITHUB_OUTPUT
           fi
 
       - name: Comment on PR - Test Failure
@@ -105,15 +74,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const validationMessage = `${{ steps.validate.outputs.validation_message }}`;
-            const hasChanges = '${{ steps.changed-files.outputs.has_changes }}' === 'true';
-            
-            let body;
-            if (hasChanges) {
-              body = '## ✅ Validation Successful\n\nAll tests passed and changed supplement data files have been validated successfully against the schemas.';
-            } else {
-              body = '## ✅ Validation Successful\n\nAll tests passed. No supplement claim files were changed in this PR.';
-            }
+            const body = '## ✅ Validation Successful\n\nAll tests passed and all supplement data files have been validated successfully against the schemas.';
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -144,7 +105,6 @@ jobs:
           script: |
             const testStatus = '${{ steps.test.outputs.test_status }}';
             const validationStatus = '${{ steps.validate.outputs.validation_status }}';
-            const hasChanges = '${{ steps.changed-files.outputs.has_changes }}' === 'true';
 
             let conclusion, title, summary;
 
@@ -155,15 +115,11 @@ jobs:
             } else if (validationStatus === 'failure') {
               conclusion = 'failure';
               title = 'Validation failed';
-              summary = 'Some changed supplement data files failed validation';
+              summary = 'Some supplement data files failed validation';
             } else if (testStatus === 'success' && validationStatus === 'success') {
               conclusion = 'success';
               title = 'Tests and validation passed';
-              if (hasChanges) {
-                summary = 'All tests passed and changed supplement data files are valid';
-              } else {
-                summary = 'All tests passed. No supplement claim files were changed.';
-              }
+              summary = 'All tests passed and supplement data files are valid';
             } else {
               conclusion = 'failure';
               title = 'Incomplete validation';

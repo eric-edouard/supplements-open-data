@@ -1,0 +1,17 @@
+created: 2025-01-27
+contributor: https://github.com/eric-edouard
+paper: 10.1093/nutrit/nuac064
+
+paper_quotes:
+  abstract:
+    - "Overall, creatine supplementation improved measures of memory compared with placebo (standard mean difference [SMD] = 0.29, 95%CI, 0.04–0.53; I2 = 66%; P = 0.02)"
+    - "Creatine dose (≈ 2.2–20 g/d), duration of intervention (5 days to 24 weeks), sex, or geographical origin did not influence the findings"
+
+effect: memory-formation
+kind: intended
+direction: positive
+description: "Creatine supplementation enhanced measures of memory performance in healthy individuals"
+strength: strong
+p_value: 0.02
+dosage_min: 2000
+dosage_max: 20000
