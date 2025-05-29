@@ -78,48 +78,48 @@ export type ValidationError = {
 function slugify(text: string): string {
 	return text
 		.toLowerCase()
-		.replace(/\s+/g, '-')
-		.replace(/[^a-z0-9-]/g, '')
-		.replace(/-+/g, '-')
-		.replace(/^-|-$/g, '');
+		.replace(/\s+/g, "-")
+		.replace(/[^a-z0-9-]/g, "")
+		.replace(/-+/g, "-")
+		.replace(/^-|-$/g, "");
 }
 
 function generateExpectedFileName(data: any, claimType: string): string {
 	switch (claimType) {
-		case 'effects':
-			const kind = data.kind || 'unknown';
-			const effect = data.effect || 'unknown';
-			const direction = data.direction || 'unknown';
-			const strength = data.strength || 'unknown';
+		case "effects":
+			const kind = data.kind || "unknown";
+			const effect = data.effect || "unknown";
+			const direction = data.direction || "unknown";
+			const strength = data.strength || "unknown";
 			return `${kind}-${effect}-${direction}-${strength}.yml`;
-			
-		case 'biomarkers':
-			const biomarker = data.biomarker || 'unknown';
-			const bioDirection = data.direction || 'unknown';
-			const bioStrength = data.strength || 'none';
+
+		case "biomarkers":
+			const biomarker = data.biomarker || "unknown";
+			const bioDirection = data.direction || "unknown";
+			const bioStrength = data.strength || "none";
 			return `${biomarker}-${bioDirection}-${bioStrength}.yml`;
-			
-		case 'interactions':
-			const target = slugify(data.target || 'unknown');
-			const dangerLevel = data.danger_level || 'unknown';
+
+		case "interactions":
+			const target = slugify(data.target || "unknown");
+			const dangerLevel = data.danger_level || "unknown";
 			return `${target}-${dangerLevel}.yml`;
-			
-		case 'formulations':
-			const formulation = slugify(data.formulation || 'unknown');
+
+		case "formulations":
+			const formulation = slugify(data.formulation || "unknown");
 			if (data.change) {
 				return `${formulation}-${data.change}.yml`;
 			} else if (data.change_percent) {
 				return `${formulation}-${data.change_percent}pct.yml`;
 			}
 			return `${formulation}-unknown.yml`;
-			
-		case 'toxicity':
+
+		case "toxicity":
 			if (data.threshold_amount) {
 				return `${data.threshold_amount}mg-toxicity.yml`;
 			}
 			return `toxicity.yml`;
-			
-		case 'cycles':
+
+		case "cycles":
 			if (data.days_on_off) {
 				return `${data.days_on_off}-cycle.yml`;
 			} else if (data.weeks_on_off) {
@@ -127,24 +127,24 @@ function generateExpectedFileName(data: any, claimType: string): string {
 			} else if (data.months_on_off) {
 				return `${data.months_on_off}m-cycle.yml`;
 			}
-			const cycle = data.cycle || 'unknown';
+			const cycle = data.cycle || "unknown";
 			return `${cycle}-cycle.yml`;
-			
-		case 'synergies':
-			const compound = slugify(data.with_compound || 'unknown');
+
+		case "synergies":
+			const compound = slugify(data.with_compound || "unknown");
 			if (data.strength) {
 				return `${compound}-${data.strength}.yml`;
 			} else if (data.change_percent) {
 				return `${compound}-${data.change_percent}pct.yml`;
 			}
 			return `${compound}-unknown.yml`;
-			
-		case 'addiction-withdrawal':
-			const symptom = slugify(data.symptom || 'unknown');
+
+		case "addiction-withdrawal":
+			const symptom = slugify(data.symptom || "unknown");
 			return `${symptom}.yml`;
-			
+
 		default:
-			return 'unknown.yml';
+			return "unknown.yml";
 	}
 }
 
@@ -152,19 +152,21 @@ function validateFileName(filePath: string, data: any): string | null {
 	// Extract claim type and actual filename
 	const claimTypeMatch = filePath.match(/\/claims\/([^\/]+)\//);
 	if (!claimTypeMatch) return null;
-	
+
 	const claimType = claimTypeMatch[1];
 	const actualFileName = path.basename(filePath);
 	const expectedFileName = generateExpectedFileName(data, claimType);
-	
+
 	// Handle duplicates (files ending with -2, -3, etc.)
-	const baseExpected = expectedFileName.replace('.yml', '');
-	const duplicatePattern = new RegExp(`^${baseExpected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(-\\d+)?\\.yml$`);
-	
+	const baseExpected = expectedFileName.replace(".yml", "");
+	const duplicatePattern = new RegExp(
+		`^${baseExpected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(-\\d+)?\\.yml$`,
+	);
+
 	if (!duplicatePattern.test(actualFileName)) {
 		return `Filename '${actualFileName}' does not match expected pattern '${expectedFileName}' based on content`;
 	}
-	
+
 	return null;
 }
 
@@ -245,7 +247,7 @@ export async function validateYAML(
 	if (validateDOI && typeof data === "object" && data && "paper" in data) {
 		const doi = (data as { paper: string }).paper;
 		const semanticScholarUrl = `https://api.semanticscholar.org/graph/v1/paper/DOI:${doi}`;
-		
+
 		try {
 			await backOff(
 				async () => {
@@ -263,7 +265,7 @@ export async function validateYAML(
 						const axiosError = error as { response?: { status?: number } };
 						return axiosError.response?.status === 429 || !axiosError.response;
 					},
-				}
+				},
 			);
 		} catch (error: unknown) {
 			const axiosError = error as { response?: { status?: number } };
@@ -293,8 +295,10 @@ async function runValidation(specificFiles?: string[]) {
 	// If specific files are provided, only validate those
 	if (specificFiles && specificFiles.length > 0) {
 		console.log(`Validating ${specificFiles.length} changed file(s)...`);
-		
+
 		for (const filePath of specificFiles) {
+			console.log(`  📄 ${path.relative(process.cwd(), filePath)}`);
+
 			// Determine file type based on path
 			if (filePath.includes("/meta.yml")) {
 				const metaSchema = await loadSchema("meta");
@@ -309,13 +313,16 @@ async function runValidation(specificFiles?: string[]) {
 					try {
 						const schema = await loadSchema(type);
 						const validateFn = ajv.compile(schema);
-						
+
 						// Determine vocabulary validation
 						let vocabularyValidation:
 							| { field: string; vocabulary: string[] }
 							| undefined;
 						if (type === "effects") {
-							vocabularyValidation = { field: "effect", vocabulary: effectsVocab };
+							vocabularyValidation = {
+								field: "effect",
+								vocabulary: effectsVocab,
+							};
 						} else if (type === "biomarkers") {
 							vocabularyValidation = {
 								field: "biomarker",
@@ -340,20 +347,18 @@ async function runValidation(specificFiles?: string[]) {
 			}
 		}
 	} else {
-		// Original full validation logic
+		// Full validation by supplement
 		console.log("Running full validation...");
-		
-		// Meta files
+
+		// Get all supplement directories
+		const supplementDirs = await glob(`${SUPP_DIR}/*/`);
+		const supplementNames = supplementDirs.map((dir) => path.basename(dir));
+
+		// Load schemas
 		const metaSchema = await loadSchema("meta");
 		const validateMeta = ajv.compile(metaSchema);
-		const metaFiles = await glob(`${SUPP_DIR}/*/meta.yml`);
-		for (const file of metaFiles) {
-			const result = await validateYAML(file, validateMeta, false);
-			if (result) failures.push(result);
-		}
 
-		// Claim types
-		const types = [
+		const claimTypes = [
 			"effects",
 			"biomarkers",
 			"cycles",
@@ -364,32 +369,70 @@ async function runValidation(specificFiles?: string[]) {
 			"addiction-withdrawal",
 		];
 
-		for (const type of types) {
+		// Load all schemas at once
+		const schemaValidators: Record<string, ValidateFunction> = {};
+		for (const type of claimTypes) {
 			const schema = await loadSchema(type);
-			const validateFn = ajv.compile(schema);
-			const files = await glob(`${SUPP_DIR}/*/claims/${type}/*.yml`);
+			schemaValidators[type] = ajv.compile(schema);
+		}
 
-			// Determine vocabulary validation
-			let vocabularyValidation:
-				| { field: string; vocabulary: string[] }
-				| undefined;
-			if (type === "effects") {
-				vocabularyValidation = { field: "effect", vocabulary: effectsVocab };
-			} else if (type === "biomarkers") {
-				vocabularyValidation = {
-					field: "biomarker",
-					vocabulary: biomarkersVocab,
-				};
+		// Validate each supplement
+		for (const supplementName of supplementNames) {
+			console.log(`\n📦 Validating ${supplementName}...`);
+
+			// Validate meta file
+			const metaFile = path.join(SUPP_DIR, supplementName, "meta.yml");
+			try {
+				await fs.access(metaFile);
+				console.log(`  📋 meta.yml`);
+				const result = await validateYAML(metaFile, validateMeta, false);
+				if (result) failures.push(result);
+			} catch {
+				failures.push({
+					filePath: metaFile,
+					errors: [{ message: "meta.yml file not found" }],
+				});
 			}
 
-			for (const file of files) {
-				const result = await validateYAML(
-					file,
-					validateFn,
-					true,
-					vocabularyValidation,
+			// Validate claims by type
+			for (const type of claimTypes) {
+				const claimFiles = await glob(
+					`${SUPP_DIR}/${supplementName}/claims/${type}/*.yml`,
 				);
-				if (result) failures.push(result);
+
+				if (claimFiles.length > 0) {
+					console.log(`  📄 ${type} (${claimFiles.length} files)`);
+
+					// Determine vocabulary validation
+					let vocabularyValidation:
+						| { field: string; vocabulary: string[] }
+						| undefined;
+					if (type === "effects") {
+						vocabularyValidation = {
+							field: "effect",
+							vocabulary: effectsVocab,
+						};
+					} else if (type === "biomarkers") {
+						vocabularyValidation = {
+							field: "biomarker",
+							vocabulary: biomarkersVocab,
+						};
+					}
+
+					for (let i = 0; i < claimFiles.length; i++) {
+						const file = claimFiles[i];
+						const fileName = path.basename(file);
+						console.log(`    ${i + 1}/${claimFiles.length} ${fileName}`);
+
+						const result = await validateYAML(
+							file,
+							schemaValidators[type],
+							true,
+							vocabularyValidation,
+						);
+						if (result) failures.push(result);
+					}
+				}
 			}
 		}
 	}
