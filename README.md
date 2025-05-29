@@ -67,14 +67,21 @@ created: 2025-01-15
 
 To keep the dataset clean, descriptive, and audit-friendly, every claim file follows this naming convention based on the claim content:
 
-🔹 **Effects:** `{kind}-{effect}-{direction}-{strength}.yml`
-🔹 **Biomarkers:** `{biomarker}-{direction}-{strength}.yml`
-🔹 **Interactions:** `{target}-{danger_level}.yml`
-🔹 **Formulations:** `{formulation}-{change|change_percent}pct.yml`
-🔹 **Toxicity:** `{threshold_amount}mg-toxicity.yml`
-🔹 **Cycles:** `{on_off_pattern}-cycle.yml`
-🔹 **Synergies:** `{with_compound}-{strength|change_percent}pct.yml`
-🔹 **Addiction-withdrawal:** `{symptom_slug}.yml`
+**Effects:** `{kind}-{effect}-{direction}-{strength}.yml`
+
+**Biomarkers:** `{biomarker}-{direction}-{strength}.yml`
+
+**Interactions:** `{target}-{danger_level}.yml`
+
+**Formulations:** `{formulation}-{change|change_percent}pct.yml`
+
+**Toxicity:** `{threshold_amount}mg-toxicity.yml`
+
+**Cycles:** `{on_off_pattern}-cycle.yml`
+
+**Synergies:** `{with_compound}-{strength|change_percent}pct.yml`
+
+**Addiction-withdrawal:** `{symptom_slug}.yml`
 
 #### Examples
 
