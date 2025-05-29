@@ -75,6 +75,99 @@ export type ValidationError = {
 	errors: { message: string }[];
 };
 
+function slugify(text: string): string {
+	return text
+		.toLowerCase()
+		.replace(/\s+/g, '-')
+		.replace(/[^a-z0-9-]/g, '')
+		.replace(/-+/g, '-')
+		.replace(/^-|-$/g, '');
+}
+
+function generateExpectedFileName(data: any, claimType: string): string {
+	switch (claimType) {
+		case 'effects':
+			const kind = data.kind || 'unknown';
+			const effect = data.effect || 'unknown';
+			const direction = data.direction || 'unknown';
+			const strength = data.strength || 'unknown';
+			return `${kind}-${effect}-${direction}-${strength}.yml`;
+			
+		case 'biomarkers':
+			const biomarker = data.biomarker || 'unknown';
+			const bioDirection = data.direction || 'unknown';
+			const bioStrength = data.strength || 'none';
+			return `${biomarker}-${bioDirection}-${bioStrength}.yml`;
+			
+		case 'interactions':
+			const target = slugify(data.target || 'unknown');
+			const dangerLevel = data.danger_level || 'unknown';
+			return `${target}-${dangerLevel}.yml`;
+			
+		case 'formulations':
+			const formulation = slugify(data.formulation || 'unknown');
+			if (data.change) {
+				return `${formulation}-${data.change}.yml`;
+			} else if (data.change_percent) {
+				return `${formulation}-${data.change_percent}pct.yml`;
+			}
+			return `${formulation}-unknown.yml`;
+			
+		case 'toxicity':
+			if (data.threshold_amount) {
+				return `${data.threshold_amount}mg-toxicity.yml`;
+			}
+			return `toxicity.yml`;
+			
+		case 'cycles':
+			if (data.days_on_off) {
+				return `${data.days_on_off}-cycle.yml`;
+			} else if (data.weeks_on_off) {
+				return `${data.weeks_on_off}w-cycle.yml`;
+			} else if (data.months_on_off) {
+				return `${data.months_on_off}m-cycle.yml`;
+			}
+			const cycle = data.cycle || 'unknown';
+			return `${cycle}-cycle.yml`;
+			
+		case 'synergies':
+			const compound = slugify(data.with_compound || 'unknown');
+			if (data.strength) {
+				return `${compound}-${data.strength}.yml`;
+			} else if (data.change_percent) {
+				return `${compound}-${data.change_percent}pct.yml`;
+			}
+			return `${compound}-unknown.yml`;
+			
+		case 'addiction-withdrawal':
+			const symptom = slugify(data.symptom || 'unknown');
+			return `${symptom}.yml`;
+			
+		default:
+			return 'unknown.yml';
+	}
+}
+
+function validateFileName(filePath: string, data: any): string | null {
+	// Extract claim type and actual filename
+	const claimTypeMatch = filePath.match(/\/claims\/([^\/]+)\//);
+	if (!claimTypeMatch) return null;
+	
+	const claimType = claimTypeMatch[1];
+	const actualFileName = path.basename(filePath);
+	const expectedFileName = generateExpectedFileName(data, claimType);
+	
+	// Handle duplicates (files ending with -2, -3, etc.)
+	const baseExpected = expectedFileName.replace('.yml', '');
+	const duplicatePattern = new RegExp(`^${baseExpected.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(-\\d+)?\\.yml$`);
+	
+	if (!duplicatePattern.test(actualFileName)) {
+		return `Filename '${actualFileName}' does not match expected pattern '${expectedFileName}' based on content`;
+	}
+	
+	return null;
+}
+
 export async function validateYAML(
 	filePath: string,
 	validateFn: ValidateFunction,
@@ -134,6 +227,17 @@ export async function validateYAML(
 						message: `Invalid ${vocabularyValidation.field}: '${fieldValue}' not found in vocabulary`,
 					},
 				],
+			};
+		}
+	}
+
+	// Validate filename matches content
+	if (typeof data === "object" && data) {
+		const filenameError = validateFileName(filePath, data);
+		if (filenameError) {
+			return {
+				filePath,
+				errors: [{ message: filenameError }],
 			};
 		}
 	}

@@ -12,5 +12,5 @@ direction: positive
 description: "Significantly improved skin elasticity in systematic review and meta-analysis"
 strength: strong
 p_value: 0.009
-dosage_min: 3
-dosage_max: 6
+dosage_min: 2
+dosage_max: 12

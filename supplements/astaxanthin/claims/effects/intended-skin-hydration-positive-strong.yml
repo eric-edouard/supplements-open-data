@@ -12,5 +12,5 @@ direction: positive
 description: "Significantly restored skin moisture content in systematic review and meta-analysis"
 strength: strong
 p_value: 0.03
-dosage_min: 3
-dosage_max: 6
+dosage_min: 2
+dosage_max: 12

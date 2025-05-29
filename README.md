@@ -65,65 +65,89 @@ created: 2024-01-15
 
 ### File Naming Convention
 
-To keep the dataset clean, sortable, and audit-friendly, every claim file follows this naming convention:
+To keep the dataset clean, descriptive, and audit-friendly, every claim file follows this naming convention based on the claim content:
 
-<publication-date>-<claim-subject>.yml
+🔹 **Effects:** `{kind}-{effect}-{direction}-{strength}.yml`
+🔹 **Biomarkers:** `{biomarker}-{direction}-{strength}.yml`
+🔹 **Interactions:** `{target}-{danger_level}.yml`
+🔹 **Formulations:** `{formulation}-{change|change_percent}pct.yml`
+🔹 **Toxicity:** `{threshold_amount}mg-toxicity.yml`
+🔹 **Cycles:** `{on_off_pattern}-cycle.yml`
+🔹 **Synergies:** `{with_compound}-{strength|change_percent}pct.yml`
+🔹 **Addiction-withdrawal:** `{symptom_slug}.yml`
 
-🔹 Format
-	•	<publication-date>: Use the paper’s publication date, not the contribution date.
-	•	Use full date when available: YYYY-MM-DD
-	•	If day is unknown: YYYY-MM
-	•	If only year is known: YYYY
-	•	<claim-subject>: Use the main effect, biomarker, or claim type as a short, kebab-case identifier.
-	•	For effects → muscle-strength, sleep-quality, etc.
-	•	For biomarkers → cortisol, blood-glucose, etc.
-	•	For interactions, synergies, toxicity, etc. → use the most descriptive keyword (e.g., warfarin, liposomal, gi-distress).
+#### Examples
 
-🔹 Examples
-
-#### Effects
-
+**Effects:**
 ```
-2023-11-12-muscle-strength.yml
-2024-04-memory-recall.yml
-2022-lifespan-extension.yml
+intended-muscle-strength-positive-strong.yml
+intended-sleep-quality-positive-moderate.yml
+adverse-nausea-negative-weak.yml
 ```
 
-#### Biomarkers
+**Biomarkers:**
+```
+blood-glucose-negative-strong.yml
+cortisol-negative-moderate.yml
+crp-negative-strong.yml
+```
 
+**Interactions:**
 ```
-2024-01-15-blood-glucose.yml
-2021-cortisol.yml
+warfarin-mild.yml
+caffeine-low.yml
+aspirin-severe.yml
 ```
 
-#### Interactions
+**Formulations:**
 ```
-2023-06-warfarin.yml
+liposomal-positive.yml
+enteric-coated-neutral.yml
+time-release-120pct.yml
 ```
-#### Formulations
+
+**Toxicity:**
 ```
-2024-02-liposomal.yml
+1000mg-toxicity.yml
+500mg-toxicity.yml
+gi-distress-toxicity.yml
 ```
-#### Toxicity
+
+**Cycles:**
 ```
-2022-10-gi-distress.yml
+5-2-cycle.yml              # 5 days on, 2 days off
+8w-4w-cycle.yml           # 8 weeks on, 4 weeks off
+none-cycle.yml            # no cycling needed
 ```
-#### Cycles
+
+**Synergies:**
 ```
-2024-03-5-2-cycle.yml
+citrulline-strong.yml
+vitamin-d-120pct.yml
+magnesium-moderate.yml
+```
+
+**Addiction-withdrawal:**
+```
+rebound-insomnia.yml
+tolerance.yml
+withdrawal-anxiety.yml
 ```
 
 #### 🧾 Why this format?
 
-	•	Chronological sorting: Files auto-group by publication date for timeline views.
-	•	Paper grouping: Claims from the same study appear together in file listings.
-	•	Filesystem-safe: No slashes, dots, or raw DOIs.
-	•	Human-readable: Easy to understand what each file contains at a glance.
+	•	**Content-descriptive:** File name immediately tells you what the claim is about
+	•	**No external dependencies:** Don't need to look up publication dates
+	•	**Filesystem-safe:** No special characters or dates that could be incorrect
+	•	**Human-readable:** Easy to understand what each file contains at a glance
+	•	**Sortable:** Claims group naturally by type and effect
 
-⚠️ If multiple claims share the same publication date and subject, suffix with -2, -3, etc.
+⚠️ **Handling duplicates:** If multiple claims have identical names, suffix with -2, -3, etc.
 
-2024-01-15-blood-glucose.yml
-2024-01-15-blood-glucose-2.yml
+```
+intended-muscle-strength-positive-strong.yml
+intended-muscle-strength-positive-strong-2.yml
+```
 
 ## Claim File Content - Common keys
 
@@ -390,4 +414,3 @@ incidence_percent: 20
 * DOI resolves ✔︎  
 
 Green ticks → human review → merge.
-
