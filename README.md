@@ -56,7 +56,7 @@ slug: l-theanine
 name: L-Theanine
 synonyms: [theanine, suntheanine, liposomal theanine]
 dosage_unit: milligram
-created: 2024-01-15
+created: 2025-01-15
 ```
 
 ---
@@ -175,7 +175,7 @@ paper_quotes:
 
 Example: 
 ```yaml
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
@@ -220,7 +220,7 @@ paper_quotes:
 Example: 
 ```yaml
 # Common keys
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
@@ -256,7 +256,7 @@ timing: pre-exercise
 Example: 
 ```yaml
 # Common keys
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
@@ -285,7 +285,7 @@ timing: pre-exercise
 Example:
 ```yaml
 # Common keys
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
@@ -306,7 +306,7 @@ days_on_off: 5-2 # weekdays, stop of week-ends
 
 ```yaml
 # Common keys
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
@@ -330,7 +330,7 @@ description: May potentiate anticoagulant effect
 
 ```yaml
 # Common keys
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
@@ -386,7 +386,7 @@ strength: light
 Example:
 ```yaml
 # Common keys
-created: 2024-05-18
+created: 2025-05-18
 contributor: alice@example.com
 paper: 10.1038/s41586-2024-00001
 
