@@ -1,0 +1,16 @@
+created: 2025-01-29
+contributor: https://github.com/eric-edouard
+paper: 10.1001/archinte.167.15.1610
+
+paper_quotes:
+  abstract:
+    - "There was no overall effect of ascorbic acid (relative risk [RR], 1.02; 95% CI, 0.92-1.13 [P = .71])"
+    - "There were no overall effects of ascorbic acid, vitamin E, or beta carotene on cardiovascular events among women at high risk for CVD"
+
+effect: cardiovascular-health
+kind: neutral
+direction: neutral
+description: "No overall effect on cardiovascular events among women at high risk"
+strength: none
+dosage_min: 500
+dosage_max: 500

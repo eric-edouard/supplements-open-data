@@ -1,0 +1,17 @@
+created: 2025-05-29
+contributor: https://github.com/eric-edouard
+paper: 10.3390/nu15081852
+
+paper_quotes:
+  abstract:
+    - "Compared with a placebo, spermidine supplementation significantly increased spermine levels in the plasma, but it did not affect spermidine or putrescine levels"
+    - "No effect on salivary polyamine concentrations was observed"
+    - "15 mg/d of spermidine was administered orally"
+
+biomarker: spermidine
+direction: neutral
+description: "15mg daily spermidine supplementation for 5 days did not increase blood or salivary spermidine levels in healthy adults"
+strength: none
+dosage_min: 15
+dosage_max: 15
+timing: daily
