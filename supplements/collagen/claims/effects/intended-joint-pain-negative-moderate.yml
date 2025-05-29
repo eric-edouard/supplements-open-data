@@ -1,0 +1,18 @@
+created: 2025-05-29
+contributor: https://github.com/eric-edouard
+paper: 10.3390/ijerph21060687
+
+paper_quotes:
+  abstract:
+    - "The results showed that collagen peptide supplementation significantly reduced joint discomfort (SMD = -0.43, 95% CI: -0.69 to -0.18, p = 0.0009)."
+    - "This meta-analysis provides evidence that collagen peptide supplementation may be effective in reducing joint discomfort and improving joint function."
+
+dosage_min: 2.5
+dosage_max: 15
+dosage_unit: g
+timing: daily
+
+effect: joint-pain
+kind: intended
+direction: negative
+strength: moderate
