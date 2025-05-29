@@ -1,0 +1,18 @@
+created: 2025-05-29
+contributor: https://github.com/eric-edouard
+paper: 10.1093/cercor/bht163
+
+paper_quotes:
+  abstract:
+    - "We found a significant increase in executive functions after LC-n3-FA compared with placebo (P = 0.023)."
+    - "Sixty-five healthy subjects (50-75 years, 30 females) successfully completed 26 weeks of either fish oil (2.2 g/day LC-n3-FA) or placebo intake."
+
+dosage_min: 2.2
+dosage_max: 2.2
+dosage_unit: g
+timing: daily
+
+effect: processing-speed
+kind: intended
+direction: positive
+strength: moderate
