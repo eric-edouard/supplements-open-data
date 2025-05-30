@@ -5,7 +5,6 @@ paper_quotes:
   abstract:
     - These findings indicate that the use of CS at doses of 3 g and 5 g/day for a short period (35 days) is safe and did not impair the kidneys or renal function in young healthy subjects.
     - After 35 days of intervention, all characteristics were maintained without significant difference (P > 0.05) between the groups, including serum creatinine, eGFR, and more sensitive kidney biomarker concentrations (KIM-1 and MCP-1).
-timing: daily
 biomarker: creatine-kinase
 direction: neutral
 strength: none

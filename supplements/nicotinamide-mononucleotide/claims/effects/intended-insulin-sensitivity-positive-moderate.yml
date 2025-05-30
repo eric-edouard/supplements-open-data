@@ -9,7 +9,6 @@ effect: insulin-sensitivity
 kind: intended
 direction: positive
 strength: moderate
-timing: daily
 dosage:
   unit: milligram
   value: 250

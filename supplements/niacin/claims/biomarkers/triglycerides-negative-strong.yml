@@ -8,7 +8,6 @@ paper_quotes:
 biomarker: triglycerides
 direction: negative
 strength: strong
-timing: daily
 dosage:
   unit: milligram
   min: 1500

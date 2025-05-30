@@ -8,7 +8,6 @@ paper_quotes:
 biomarker: ldl
 direction: negative
 strength: strong
-timing: daily
 dosage:
   unit: milligram
   min: 1500

@@ -9,7 +9,6 @@ effect: arterial-stiffness
 kind: intended
 direction: negative
 strength: weak
-timing: daily
 dosage:
   unit: milligram
   value: 250

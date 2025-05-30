@@ -9,7 +9,6 @@ effect: exercise-capacity
 kind: intended
 direction: positive
 strength: moderate
-timing: daily
 dosage:
   unit: milligram
   min: 300

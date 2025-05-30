@@ -8,7 +8,6 @@ paper_quotes:
 biomarker: hdl
 direction: positive
 strength: strong
-timing: daily
 dosage:
   unit: milligram
   min: 1500

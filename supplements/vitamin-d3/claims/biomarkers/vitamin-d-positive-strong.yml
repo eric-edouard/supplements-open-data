@@ -4,7 +4,6 @@ paper: 10.1186/s12891-022-05364-z
 paper_quotes:
   abstract:
     - 25(OH)D levels marginally increased in the two groups received vitamin D3 alone or combined with calcium compared to the decline seen in those who received calcium supplement alone or a placebo.
-timing: daily
 biomarker: vitamin-d
 direction: positive
 strength: strong
