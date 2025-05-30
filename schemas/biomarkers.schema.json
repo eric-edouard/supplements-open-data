@@ -51,7 +51,10 @@
 				{ "required": ["value", "min", "max"] }
 			]
 		},
-		"timing": { "type": "string" },
+		"timing": { 
+			"type": "string",
+			"enum": ["upon-waking", "morning", "afternoon", "evening", "bedtime", "pre-meal", "with-meal", "post-meal", "between-meals", "empty-stomach", "pre-exercise", "intra-exercise", "post-exercise"]
+		},
 		"paper_quotes": {
 			"type": "object",
 			"properties": {
