@@ -211,8 +211,8 @@ paper_quotes:
 | `strength` | ✔︎ | strong / moderate / weak / none (see Strength scale) |
 | `p_value` | - | positive / negative / neutral |
 | `effect_size` | - | free text |
-| `dosage_min` | - | number, must be lower than or equal to dosage_max |
-| `dosage_max` | - | number, must be higher than or equal to dosage_min |
+| `dosage` | - | structured object with min, max, and unit fields |
+| `onset_duration` | - | structured object indicating when effects begin |
 | `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
 
 #### Strength scale
@@ -223,6 +223,73 @@ paper_quotes:
 | **moderate** | Significant secondary outcome or trend (0.05–0.10) |
 | **weak**     | Non‑significant directional change |
 | **none**     | Paper reports "no effect" |
+
+#### Dosage Structure
+
+The `dosage` field uses a structured format to specify dosage amounts and units. You can use either a single value, a range, or both:
+
+**Single value:**
+```yaml
+dosage:
+  value: 5        # exact dose (number)
+  unit: "gram"    # required unit
+```
+
+**Range:**
+```yaml
+dosage:
+  min: 3          # minimum effective dose (number)
+  max: 5          # maximum recommended dose (number)  
+  unit: "gram"    # required unit
+```
+
+**Both value and range:**
+```yaml
+dosage:
+  value: 4        # typical/recommended dose (number)
+  min: 3          # minimum effective dose (number)
+  max: 5          # maximum recommended dose (number)
+  unit: "gram"    # required unit
+```
+
+**Valid dosage units:** `microgram`, `milligram`, `gram`, `kilogram`, `IU`, `mg/kg`, `g/kg`
+
+#### Onset Duration Structure
+
+The `onset_duration` field specifies when effects typically begin. Like dosage, you can use a single value, range, or both:
+
+**Single value:**
+```yaml
+onset_duration:
+  value: 1        # typical onset time (number)
+  unit: "hours"   # required unit
+```
+
+**Range:**
+```yaml
+onset_duration:
+  min: 1          # earliest onset time (number)
+  max: 2          # latest onset time (number)
+  unit: "hours"   # required unit
+```
+
+**Both value and range:**
+```yaml
+onset_duration:
+  value: 1.5      # typical onset time (number)
+  min: 1          # earliest onset time (number)
+  max: 2          # latest onset time (number)
+  unit: "hours"   # required unit
+```
+
+**Valid onset duration units:** `immediate`, `minutes`, `hours`, `days`, `weeks`, `months`, `years`
+
+For immediate effects:
+```yaml
+onset_duration:
+  value: 0
+  unit: "immediate"
+```
 
 Example: 
 ```yaml
@@ -241,8 +308,16 @@ p_value: 0.02
 effect_size: "Cohen's d = 0.8"
 
 # Effect Dosage keys
-dosage_min: 3
-dosage_max: 5
+dosage:
+  value: 4
+  min: 3
+  max: 5
+  unit: "gram"
+onset_duration:
+  value: 1.5
+  min: 1
+  max: 2
+  unit: "hours"
 timing: pre-exercise
 
 ```
@@ -256,8 +331,8 @@ timing: pre-exercise
 | `biomarker` | ✔︎ | slug from vocab/biomarkers.yml |
 | `direction` | ✔︎ | positive / negative / neutral |
 | `strength` | - | If applicable: strong / moderate / weak / none (see Strength scale) |
-| `dosage_min` | - | number, must be lower than or equal to dosage_max |
-| `dosage_max` | - | number, must be higher than or equal to dosage_min |
+| `dosage` | - | structured object with min, max, and unit fields |
+| `onset_duration` | - | structured object indicating when effects begin |
 | `timing` | - | [upon-waking / morning / afternoon / evening / bedtime / pre-meal / with-meal / post-meal / between-meals / empty-stomach / pre-exercise / intra-exercise / post-exercise] |
 
 Example: 
@@ -272,11 +347,18 @@ biomarker: blood-pressure
 direction: positive
 
 # Biomarker Dosage keys
-min: 3
-max: 5
+dosage:
+  value: 1500
+  unit: "milligram"
+onset_duration:
+  min: 2
+  max: 4
+  unit: "weeks"
 timing: pre-exercise
 
 ```
+
+
 
 ---
 
