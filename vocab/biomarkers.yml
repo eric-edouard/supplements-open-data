@@ -18,8 +18,7 @@
 - muscle-cross-sectional-area
 - vo2max
 - lactate-threshold
-- estrogen
-- progesterone
+
 # Cardiovascular
 - blood-pressure
 - resting-heart-rate
@@ -84,3 +83,9 @@
 - lps
 - calprotectin
 - sibo-markers
+
+# other
+- estradiol
+- shbg
+- estrogen
+- progesterone
