@@ -1,5 +1,8 @@
 slug: calcium-alpha-ketoglutarate
 name: Calcium Alpha-Ketoglutarate
-synonyms: [Ca-AKG, calcium AKG]
+synonyms:
+  - ca-akg
+  - calcium akg
+  - alpha-ketoglutaric acid calcium salt
 dosage_unit: milligram
 created: 30-05-2025
