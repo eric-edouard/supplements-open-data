@@ -414,7 +414,19 @@ async function collectDOIs(files: string[]): Promise<Set<string>> {
 	return dois;
 }
 
-// Validate DOIs in batches using Semantic Scholar batch API
+// Validate a single DOI using Crossref API
+async function validateDOIWithCrossref(doi: string): Promise<boolean> {
+	try {
+		const response = await axios.head(`https://api.crossref.org/works/${doi}`);
+		return response.status === 200;
+	} catch (error: unknown) {
+		const axiosError = error as { response?: { status?: number } };
+		// 404 means DOI doesn't exist, any other error we'll assume DOI is valid
+		return axiosError.response?.status !== 404;
+	}
+}
+
+// Validate DOIs in batches using Semantic Scholar batch API with Crossref fallback
 async function validateDOIsInBatch(dois: string[]): Promise<void> {
 	const BATCH_SIZE = 500;
 	const batches: string[][] = [];
@@ -454,11 +466,39 @@ async function validateDOIsInBatch(dois: string[]): Promise<void> {
 					
 					// Process response to cache validation results
 					const papers = response.data;
+					
+					// Collect DOIs not found in Semantic Scholar
+					const notFoundInSS = [];
 					for (let i = 0; i < batch.length; i++) {
 						const doi = batch[i];
 						const paper = papers[i];
 						// If paper is null, DOI was not found
-						doiValidationCache.set(doi, paper !== null);
+						if (paper === null) {
+							notFoundInSS.push(doi);
+						} else {
+							doiValidationCache.set(doi, true);
+						}
+					}
+					
+					// If any DOIs weren't found in Semantic Scholar, check with Crossref
+					if (notFoundInSS.length > 0) {
+						console.log(`      ⚠️  ${notFoundInSS.length} DOIs not found in Semantic Scholar, checking Crossref...`);
+						
+						// Check each DOI with Crossref
+						const crossrefPromises = notFoundInSS.map(async (doi) => {
+							const isValid = await validateDOIWithCrossref(doi);
+							doiValidationCache.set(doi, isValid);
+							return { doi, isValid };
+						});
+						
+						const crossrefResults = await Promise.all(crossrefPromises);
+						const stillInvalid = crossrefResults.filter(r => !r.isValid);
+						
+						if (stillInvalid.length > 0) {
+							console.log(`      ❌ ${stillInvalid.length} DOIs not found in Crossref: ${stillInvalid.slice(0, 3).map(r => r.doi).join(', ')}${stillInvalid.length > 3 ? '...' : ''}`);
+						} else {
+							console.log(`      ✅ All DOIs found in Crossref`);
+						}
 					}
 				},
 				{
