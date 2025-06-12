@@ -1,5 +1,7 @@
 slug: curcumin
 name: Curcumin
-synonyms: []
+synonyms:
+  - turmeric extract
+  - curcuma longa
 dosage_unit: milligram
 created: 22-05-2025

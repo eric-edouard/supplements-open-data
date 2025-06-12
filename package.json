@@ -6,6 +6,7 @@
 	"scripts": {
 		"list:supplements": "tsx scripts/list-suppplements.ts",
 		"validate": "tsx scripts/validate.ts",
+		"migrate:dosage": "tsx scripts/migrate-dosage.ts",
 		"test": "vitest --run",
 		"test:watch": "vitest --watch",
 		"test:coverage": "vitest --coverage --run"

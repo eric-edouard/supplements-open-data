@@ -1,5 +1,6 @@
 slug: vitamin-d3
 name: Vitamin D3
-synonyms: []
+synonyms:
+  - cholecalciferol
 dosage_unit: milligram
 created: 22-05-2025

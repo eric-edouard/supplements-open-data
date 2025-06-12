@@ -1,5 +1,6 @@
 slug: nicotinamide-riboside
 name: Nicotinamide Riboside
-synonyms: [NR]
+synonyms:
+  - nr
 dosage_unit: milligram
 created: 22-05-2025

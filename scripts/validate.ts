@@ -236,6 +236,29 @@ export async function validateYAML(
 		}
 	}
 
+	// Validate slug for meta.yml files
+	if (filePath.endsWith("/meta.yml") && typeof data === "object" && data && "slug" in data) {
+		const slug = (data as { slug: string }).slug;
+		
+		// Check slug format (lowercase, alphanumeric, hyphens only)
+		const validSlugPattern = /^[a-z0-9-]+$/;
+		if (!validSlugPattern.test(slug)) {
+			return {
+				filePath,
+				errors: [{ message: `Invalid slug format: '${slug}'. Slug must contain only lowercase letters, numbers, and hyphens` }],
+			};
+		}
+		
+		// Check if slug matches directory name
+		const dirName = path.basename(path.dirname(filePath));
+		if (slug !== dirName) {
+			return {
+				filePath,
+				errors: [{ message: `Slug '${slug}' does not match directory name '${dirName}'` }],
+			};
+		}
+	}
+
 	// Validate filename matches content
 	if (typeof data === "object" && data) {
 		const filenameError = validateFileName(filePath, data);
@@ -265,6 +288,106 @@ export async function validateYAML(
 	return null;
 }
 
+// Check for duplicate claims (same DOI + same effect/biomarker/etc)
+async function checkForDuplicateClaims(supplementDir: string): Promise<ValidationError[]> {
+	const duplicateErrors: ValidationError[] = [];
+	const claimTypes = [
+		"effects",
+		"biomarkers",
+		"cycles",
+		"interactions",
+		"formulations",
+		"toxicity",
+		"synergies",
+		"addiction-withdrawal",
+	];
+
+	for (const claimType of claimTypes) {
+		const claimFiles = await glob(`${supplementDir}/claims/${claimType}/*.yml`);
+		if (claimFiles.length === 0) continue;
+
+		// Map to store DOI + identifier combinations
+		const claimMap = new Map<string, string[]>(); // key: "DOI|identifier", value: [file1, file2, ...]
+
+		for (const filePath of claimFiles) {
+			try {
+				const content = await fs.readFile(filePath, "utf-8");
+				const [parseError, data] = safeTryCatch(() => YAML.parse(content));
+				
+				if (!parseError && typeof data === "object" && data && "paper" in data) {
+					const doi = (data as { paper: string }).paper;
+					let identifier: string | undefined;
+
+					// Get the main identifier based on claim type
+					switch (claimType) {
+						case "effects":
+							identifier = (data as { effect?: string }).effect;
+							break;
+						case "biomarkers":
+							identifier = (data as { biomarker?: string }).biomarker;
+							break;
+						case "interactions":
+							identifier = (data as { target?: string }).target;
+							break;
+						case "formulations":
+							identifier = (data as { formulation?: string }).formulation;
+							break;
+						case "synergies":
+							identifier = (data as { with_compound?: string }).with_compound;
+							break;
+						case "addiction-withdrawal":
+							identifier = (data as { symptom?: string }).symptom;
+							break;
+						case "cycles":
+							// For cycles, create a unique identifier from the cycle pattern
+							if ((data as any).days_on_off) {
+								identifier = `days_${(data as any).days_on_off}`;
+							} else if ((data as any).weeks_on_off) {
+								identifier = `weeks_${(data as any).weeks_on_off}`;
+							} else if ((data as any).months_on_off) {
+								identifier = `months_${(data as any).months_on_off}`;
+							} else if ((data as any).cycle) {
+								identifier = (data as any).cycle;
+							}
+							break;
+						case "toxicity":
+							// For toxicity, use threshold_amount as identifier if present
+							identifier = (data as any).threshold_amount ? 
+								`threshold_${(data as any).threshold_amount}` : "general";
+							break;
+					}
+
+					if (doi && identifier) {
+						const key = `${doi}|${identifier}`;
+						const existingFiles = claimMap.get(key) || [];
+						existingFiles.push(filePath);
+						claimMap.set(key, existingFiles);
+					}
+				}
+			} catch {
+				// Skip files that can't be read or parsed
+			}
+		}
+
+		// Check for duplicates
+		for (const [key, files] of claimMap.entries()) {
+			if (files.length > 1) {
+				const [doi, identifier] = key.split("|");
+				for (const filePath of files) {
+					duplicateErrors.push({
+						filePath,
+						errors: [{
+							message: `Duplicate claim found: Same paper (${doi}) with same ${claimType.slice(0, -1)} "${identifier}". Other file(s): ${files.filter(f => f !== filePath).map(f => path.basename(f)).join(", ")}`
+						}],
+					});
+				}
+			}
+		}
+	}
+
+	return duplicateErrors;
+}
+
 // Collect all DOIs from files that need validation
 async function collectDOIs(files: string[]): Promise<Set<string>> {
 	const dois = new Set<string>();
@@ -291,7 +414,19 @@ async function collectDOIs(files: string[]): Promise<Set<string>> {
 	return dois;
 }
 
-// Validate DOIs in batches using Semantic Scholar batch API
+// Validate a single DOI using Crossref API
+async function validateDOIWithCrossref(doi: string): Promise<boolean> {
+	try {
+		const response = await axios.head(`https://api.crossref.org/works/${doi}`);
+		return response.status === 200;
+	} catch (error: unknown) {
+		const axiosError = error as { response?: { status?: number } };
+		// 404 means DOI doesn't exist, any other error we'll assume DOI is valid
+		return axiosError.response?.status !== 404;
+	}
+}
+
+// Validate DOIs in batches using Semantic Scholar batch API with Crossref fallback
 async function validateDOIsInBatch(dois: string[]): Promise<void> {
 	const BATCH_SIZE = 500;
 	const batches: string[][] = [];
@@ -331,11 +466,39 @@ async function validateDOIsInBatch(dois: string[]): Promise<void> {
 					
 					// Process response to cache validation results
 					const papers = response.data;
+					
+					// Collect DOIs not found in Semantic Scholar
+					const notFoundInSS = [];
 					for (let i = 0; i < batch.length; i++) {
 						const doi = batch[i];
 						const paper = papers[i];
 						// If paper is null, DOI was not found
-						doiValidationCache.set(doi, paper !== null);
+						if (paper === null) {
+							notFoundInSS.push(doi);
+						} else {
+							doiValidationCache.set(doi, true);
+						}
+					}
+					
+					// If any DOIs weren't found in Semantic Scholar, check with Crossref
+					if (notFoundInSS.length > 0) {
+						console.log(`      ⚠️  ${notFoundInSS.length} DOIs not found in Semantic Scholar, checking Crossref...`);
+						
+						// Check each DOI with Crossref
+						const crossrefPromises = notFoundInSS.map(async (doi) => {
+							const isValid = await validateDOIWithCrossref(doi);
+							doiValidationCache.set(doi, isValid);
+							return { doi, isValid };
+						});
+						
+						const crossrefResults = await Promise.all(crossrefPromises);
+						const stillInvalid = crossrefResults.filter(r => !r.isValid);
+						
+						if (stillInvalid.length > 0) {
+							console.log(`      ❌ ${stillInvalid.length} DOIs not found in Crossref: ${stillInvalid.slice(0, 3).map(r => r.doi).join(', ')}${stillInvalid.length > 3 ? '...' : ''}`);
+						} else {
+							console.log(`      ✅ All DOIs found in Crossref`);
+						}
 					}
 				},
 				{
@@ -374,6 +537,26 @@ async function runValidation(specificFiles?: string[]) {
 		const dois = await collectDOIs(specificFiles);
 		if (dois.size > 0) {
 			await validateDOIsInBatch(Array.from(dois));
+		}
+
+		// Group files by supplement to check duplicates
+		const supplementsToCheck = new Set<string>();
+		for (const filePath of specificFiles) {
+			const match = filePath.match(/supplements\/([^\/]+)\//);
+			if (match) {
+				supplementsToCheck.add(match[1]);
+			}
+		}
+
+		// Check for duplicates in affected supplements
+		for (const supplementName of supplementsToCheck) {
+			console.log(`  🔍 Checking for duplicate claims in ${supplementName}...`);
+			const supplementDir = path.join(SUPP_DIR, supplementName);
+			const duplicateErrors = await checkForDuplicateClaims(supplementDir);
+			if (duplicateErrors.length > 0) {
+				console.log(`    ❌ Found ${duplicateErrors.length} duplicate claim(s)`);
+				failures.push(...duplicateErrors);
+			}
 		}
 
 		for (const filePath of specificFiles) {
@@ -479,6 +662,15 @@ async function runValidation(specificFiles?: string[]) {
 					filePath: metaFile,
 					errors: [{ message: "meta.yml file not found" }],
 				});
+			}
+
+			// Check for duplicate claims
+			console.log(`  🔍 Checking for duplicate claims...`);
+			const supplementDir = path.join(SUPP_DIR, supplementName);
+			const duplicateErrors = await checkForDuplicateClaims(supplementDir);
+			if (duplicateErrors.length > 0) {
+				console.log(`    ❌ Found ${duplicateErrors.length} duplicate claim(s)`);
+				failures.push(...duplicateErrors);
 			}
 
 			// Validate claims by type

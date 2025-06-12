@@ -1,5 +1,8 @@
 slug: multivitamin
 name: Multivitamin
-synonyms: [MVM, Multivitamin/Multimineral]
+synonyms:
+  - multivitamins
+  - multimineral
+  - multi
 dosage_unit: milligram
 created: 2025-05-29
