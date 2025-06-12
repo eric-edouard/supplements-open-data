@@ -1,13 +1,11 @@
 created: 2025-05-29
 contributor: https://github.com/eric-edouard
 paper: 10.1001/jamanetworkopen.2022.14647
-
 paper_quotes:
   abstract:
-    - "long-term spermine supplementation in people with subjective cognitive decline didn't modify memory and biomarkers compared to Placebo"
-
+    - long-term spermine supplementation in people with subjective cognitive
+      decline didn't modify memory and biomarkers compared to Placebo
 effect: memory-formation
 kind: neutral
 direction: neutral
-description: "Long-term spermidine supplementation did not improve memory in people with subjective cognitive decline"
 strength: none

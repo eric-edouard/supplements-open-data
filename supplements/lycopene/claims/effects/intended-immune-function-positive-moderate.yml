@@ -1,17 +1,18 @@
 created: 2025-05-29
 contributor: https://github.com/eric-edouard
 paper: 10.3390/nu14235152
-
 paper_quotes:
   abstract:
-    - "We concluded that the results of most of the reviewed in vivo studies confirmed the anti-cancer activities of lycopene"
-    - "The reported mechanisms of lycopene action in vivo included regulation of oxidative and inflammatory processes, induction of apoptosis, and inhibition of cell division, angiogenesis, and metastasis formation"
-
+    - We concluded that the results of most of the reviewed in vivo studies
+      confirmed the anti-cancer activities of lycopene
+    - The reported mechanisms of lycopene action in vivo included regulation of
+      oxidative and inflammatory processes, induction of apoptosis, and
+      inhibition of cell division, angiogenesis, and metastasis formation
 effect: immune-function
 kind: intended
 direction: positive
-description: "In vivo studies show lycopene regulates inflammatory processes and supports anti-cancer immunity"
 strength: moderate
-dosage_min: 15
-dosage_max: 15
-timing: daily
+dosage:
+  min: 15
+  max: 15
+  unit: milligram

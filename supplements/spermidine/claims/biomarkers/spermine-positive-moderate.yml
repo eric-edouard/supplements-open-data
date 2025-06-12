@@ -9,8 +9,8 @@ paper_quotes:
 
 biomarker: spermine
 direction: positive
-description: "15mg daily spermidine supplementation for 5 days significantly increased plasma spermine levels in healthy adults"
 strength: moderate
-dosage_min: 15
-dosage_max: 15
-timing: daily
+dosage:
+  min: 15
+  max: 15
+  unit: milligram
