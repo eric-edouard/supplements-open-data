@@ -4,12 +4,12 @@ paper: 10.1186/1550-2783-10-39
 paper_quotes:
   abstract:
     - Arm CSA increased significantly (p < .05) in BET but not PL
-    - Body composition (BF%, FM, LBM) improved significantly (p < .05) in BET but not PL
+    - Body composition (BF%, FM, LBM) improved significantly (p < .05) in BET
+      but not PL
     - betaine group (BET; n = 11; 2.5 g/day)
 effect: muscle-mass
 kind: intended
 direction: positive
-description: Betaine supplementation significantly increased arm cross-sectional area and improved lean body mass
 strength: strong
 dosage:
   unit: gram
